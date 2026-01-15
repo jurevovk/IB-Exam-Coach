@@ -1,0 +1,14 @@
+@config "../../tailwind.config.ts";
+@import "tailwindcss";
+
+@layer base {
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-glow text-text-main antialiased;
+    font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  }
+}
