@@ -1,9 +1,14 @@
-import { AppShell } from "@/components/app/AppShell";
+import { WorkspaceShell } from "@/components/workspace/WorkspaceShell";
+import { WorkspaceSidebar } from "@/components/workspace/WorkspaceSidebar";
 
 export default function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <AppShell>{children}</AppShell>;
+  return (
+    <WorkspaceShell sidebar={<WorkspaceSidebar />}>
+      {children}
+    </WorkspaceShell>
+  );
 }

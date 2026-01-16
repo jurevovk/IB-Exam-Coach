@@ -26,7 +26,7 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <div className="grid gap-4 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           <div className="rounded-2xl border border-border bg-white/80 p-5 shadow-card">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
               Your Progress
