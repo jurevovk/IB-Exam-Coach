@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Sora } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import { AuthClientLayout } from "@/components/auth/AuthClientLayout";
 import "./globals.css";
 
@@ -29,7 +30,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${sora.variable}`}>
       <body className="antialiased">
-        <AuthClientLayout>{children}</AuthClientLayout>
+        <AuthClientLayout>
+          {children}
+          <Analytics />
+        </AuthClientLayout>
       </body>
     </html>
   );
