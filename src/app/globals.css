@@ -8,7 +8,81 @@
   }
 
   body {
-    @apply bg-glow text-text-main antialiased;
+    @apply bg-bg text-text-main antialiased;
     font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   }
 }
+
+@keyframes blob-drift-1 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(40px, -30px) scale(1.05);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+@keyframes blob-drift-2 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-30px, 20px) scale(1.04);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+@keyframes blob-drift-3 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(20px, -20px) scale(1.06);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+@keyframes fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer utilities {
+  .animate-blob-1 {
+    animation: blob-drift-1 26s ease-in-out infinite;
+  }
+
+  .animate-blob-2 {
+    animation: blob-drift-2 24s ease-in-out infinite;
+  }
+
+  .animate-blob-3 {
+    animation: blob-drift-3 30s ease-in-out infinite;
+  }
+
+  .animate-fade-up {
+    animation: fade-up 0.8s ease-out both;
+  }
+
+  .animate-fade-up-delay-1 {
+    animation-delay: 120ms;
+  }
+
+  .animate-fade-up-delay-2 {
+    animation-delay: 240ms;
+  }
+}
+  
