@@ -87,7 +87,7 @@ export default function DashboardPage() {
                   Resume your last session in under 10 minutes.
                 </p>
               </div>
-              <Button href="/subjects" className="shadow">
+              <Button href="/practice" className="shadow">
                 Resume
               </Button>
             </div>

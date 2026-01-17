@@ -25,15 +25,15 @@ const navItems: NavItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
   {
     label: "Practice",
-    href: "/subjects",
+    href: "/practice",
     icon: "practice",
-    matches: ["/subjects", "/practice"],
+    matches: ["/practice"],
   },
   { label: "Exam Simulator", href: "/exam-simulator", icon: "simulator" },
   { label: "Weakness Map", href: "/weakness-map", icon: "weakness" },
   { label: "Examples Vault", href: "/examples", icon: "examples" },
   { label: "My Plan", href: "/my-plan", icon: "plan" },
-  { label: "Grade Work", href: "/grade-work", icon: "grade" },
+  { label: "Grade Work", href: "/grade-work-app", icon: "grade" },
   { label: "Ask AI", href: "/ask-ai", icon: "chat" },
 ];
 

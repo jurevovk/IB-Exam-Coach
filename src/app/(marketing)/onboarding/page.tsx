@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { useAuth } from "@/components/auth/AuthProvider";
-import { Navbar } from "@/components/marketing/Navbar";
 import { MarketingPanel } from "@/components/marketing/MarketingPanel";
 import { SubjectLevelRow } from "@/components/subjects/SubjectLevelRow";
 import { BackButton } from "@/components/ui/BackButton";
@@ -96,158 +95,153 @@ export default function OnboardingPage() {
   }
 
   return (
-    <>
-      <Navbar />
-      <MarketingPanel>
-        <div className="space-y-8">
-          <BackButton />
-          <header className="space-y-3 text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-text-muted">
-              Step {step} of 3
-            </p>
-            <h1 className="font-heading text-3xl font-semibold text-text-main sm:text-4xl">
-              Build your IB plan
-            </h1>
-            <p className="text-sm text-text-secondary sm:text-base">
-              Tell us your exam session and subjects so we can personalize
-              practice.
-            </p>
-          </header>
+    <MarketingPanel>
+      <div className="space-y-8">
+        <BackButton />
+        <header className="space-y-3 text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-text-muted">
+            Step {step} of 3
+          </p>
+          <h1 className="font-heading text-3xl font-semibold text-text-main sm:text-4xl">
+            Build your IB plan
+          </h1>
+          <p className="text-sm text-text-secondary sm:text-base">
+            Tell us your exam session and subjects so we can personalize
+            practice.
+          </p>
+        </header>
 
-          {step === 1 ? (
-            <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
-              <div className="rounded-2xl border border-border/60 bg-white/70 p-5 shadow-sm">
-                <p className="text-sm font-medium text-text-secondary">
-                  When is your next IB exam session?
-                </p>
-                <div className="mt-4 space-y-3">
-                  <select
-                    value={sessionChoice}
-                    onChange={(event) => setSessionChoice(event.target.value)}
+        {step === 1 ? (
+          <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
+            <div className="rounded-2xl border border-border/60 bg-white/70 p-5 shadow-sm">
+              <p className="text-sm font-medium text-text-secondary">
+                When is your next IB exam session?
+              </p>
+              <div className="mt-4 space-y-3">
+                <select
+                  value={sessionChoice}
+                  onChange={(event) => setSessionChoice(event.target.value)}
+                  className="w-full rounded-xl border border-border/70 bg-white/80 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+                >
+                  {sessionOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+                {sessionChoice === "Custom" ? (
+                  <input
+                    value={customSession}
+                    onChange={(event) => setCustomSession(event.target.value)}
+                    placeholder="e.g. May 2028"
                     className="w-full rounded-xl border border-border/70 bg-white/80 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
-                  >
-                    {sessionOptions.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                  {sessionChoice === "Custom" ? (
-                    <input
-                      value={customSession}
-                      onChange={(event) => setCustomSession(event.target.value)}
-                      placeholder="e.g. May 2028"
-                      className="w-full rounded-xl border border-border/70 bg-white/80 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
-                    />
-                  ) : null}
-                </div>
-              </div>
-            </div>
-          ) : null}
-
-          {step === 2 ? (
-            <div className="space-y-4">
-              <div className="text-center">
-                <p className="text-sm font-medium text-text-secondary">
-                  Choose your subjects
-                </p>
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                {subjects.map((subject) => {
-                  const isSelected = selectedKeys.has(subject.key);
-
-                  return (
-                    <button
-                      key={subject.key}
-                      type="button"
-                      onClick={() =>
-                        toggleSubject(subject.key, subject.name)
-                      }
-                      className={cn(
-                        "rounded-2xl border border-border/60 bg-white/70 p-4 text-left shadow-sm transition hover:-translate-y-[1px]",
-                        isSelected
-                          ? "border-primary/40 bg-white shadow-card"
-                          : "hover:border-border"
-                      )}
-                    >
-                      <p className="text-sm font-semibold text-text-main">
-                        {subject.name}
-                      </p>
-                      <p className="text-xs text-text-muted">
-                        HL / SL supported
-                      </p>
-                    </button>
-                  );
-                })}
-              </div>
-              {!selectedSubjects.length ? (
-                <p className="text-center text-xs text-text-muted">
-                  Select at least one subject to continue.
-                </p>
-              ) : null}
-            </div>
-          ) : null}
-
-          {step === 3 ? (
-            <div className="space-y-4">
-              <div className="text-center">
-                <p className="text-sm font-medium text-text-secondary">
-                  Choose HL or SL for each subject
-                </p>
-              </div>
-              <div className="space-y-3">
-                {selectedSubjects.map((subject) => (
-                  <SubjectLevelRow
-                    key={subject.key}
-                    subject={{
-                      ...subject,
-                      icon: subjectIconMap.get(subject.key),
-                    }}
-                    onLevelChange={updateLevel}
                   />
-                ))}
+                ) : null}
               </div>
-              {!selectedSubjects.length ? (
-                <p className="text-center text-xs text-text-muted">
-                  Go back and select at least one subject.
-                </p>
-              ) : null}
             </div>
-          ) : null}
-
-          <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
-            <Button
-              variant="secondary"
-              className="w-full sm:w-auto"
-              onClick={() => setStep((prev) => Math.max(1, prev - 1) as Step)}
-              disabled={step === 1}
-            >
-              Back
-            </Button>
-
-            {step < 3 ? (
-              <Button
-                className="w-full shadow sm:w-auto"
-                onClick={() => setStep((prev) => (prev + 1) as Step)}
-                disabled={
-                  (step === 1 && !effectiveSession) ||
-                  (step === 2 && !selectedSubjects.length)
-                }
-              >
-                Next
-              </Button>
-            ) : (
-              <Button
-                className="w-full shadow sm:w-auto"
-                onClick={handleSave}
-                disabled={!selectedSubjects.length || !effectiveSession}
-              >
-                Save &amp; Continue
-              </Button>
-            )}
           </div>
+        ) : null}
+
+        {step === 2 ? (
+          <div className="space-y-4">
+            <div className="text-center">
+              <p className="text-sm font-medium text-text-secondary">
+                Choose your subjects
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {subjects.map((subject) => {
+                const isSelected = selectedKeys.has(subject.key);
+
+                return (
+                  <button
+                    key={subject.key}
+                    type="button"
+                    onClick={() => toggleSubject(subject.key, subject.name)}
+                    className={cn(
+                      "rounded-2xl border border-border/60 bg-white/70 p-4 text-left shadow-sm transition hover:-translate-y-[1px]",
+                      isSelected
+                        ? "border-primary/40 bg-white shadow-card"
+                        : "hover:border-border"
+                    )}
+                  >
+                    <p className="text-sm font-semibold text-text-main">
+                      {subject.name}
+                    </p>
+                    <p className="text-xs text-text-muted">
+                      HL / SL supported
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
+            {!selectedSubjects.length ? (
+              <p className="text-center text-xs text-text-muted">
+                Select at least one subject to continue.
+              </p>
+            ) : null}
+          </div>
+        ) : null}
+
+        {step === 3 ? (
+          <div className="space-y-4">
+            <div className="text-center">
+              <p className="text-sm font-medium text-text-secondary">
+                Choose HL or SL for each subject
+              </p>
+            </div>
+            <div className="space-y-3">
+              {selectedSubjects.map((subject) => (
+                <SubjectLevelRow
+                  key={subject.key}
+                  subject={{
+                    ...subject,
+                    icon: subjectIconMap.get(subject.key),
+                  }}
+                  onLevelChange={updateLevel}
+                />
+              ))}
+            </div>
+            {!selectedSubjects.length ? (
+              <p className="text-center text-xs text-text-muted">
+                Go back and select at least one subject.
+              </p>
+            ) : null}
+          </div>
+        ) : null}
+
+        <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
+          <Button
+            variant="secondary"
+            className="w-full sm:w-auto"
+            onClick={() => setStep((prev) => Math.max(1, prev - 1) as Step)}
+            disabled={step === 1}
+          >
+            Back
+          </Button>
+
+          {step < 3 ? (
+            <Button
+              className="w-full shadow sm:w-auto"
+              onClick={() => setStep((prev) => (prev + 1) as Step)}
+              disabled={
+                (step === 1 && !effectiveSession) ||
+                (step === 2 && !selectedSubjects.length)
+              }
+            >
+              Next
+            </Button>
+          ) : (
+            <Button
+              className="w-full shadow sm:w-auto"
+              onClick={handleSave}
+              disabled={!selectedSubjects.length || !effectiveSession}
+            >
+              Save &amp; Continue
+            </Button>
+          )}
         </div>
-      </MarketingPanel>
-    </>
+      </div>
+    </MarketingPanel>
   );
 }

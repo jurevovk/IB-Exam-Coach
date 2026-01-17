@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { useRequireAuth } from "@/lib/useRequireAuth";
 
-export default function EeGradePage() {
+export default function IaGradePage() {
   const { ready } = useRequireAuth();
 
   if (!ready) {
@@ -18,13 +18,13 @@ export default function EeGradePage() {
         <section className="rounded-[28px] border border-border bg-white/70 p-8 shadow-soft backdrop-blur-sm sm:p-10">
           <BackButton className="mb-6" />
           <h1 className="font-heading text-2xl font-semibold text-text-main">
-            Extended Essay Feedback
+            Internal Assessment Feedback
           </h1>
           <p className="mt-2 text-sm text-text-muted">
-            This is a placeholder for EE grading.
+            This is a placeholder for IA grading.
           </p>
           <div className="mt-6">
-            <Button href="/grade-work" variant="secondary">
+            <Button href="/grade-work-app" variant="secondary">
               Back to Grade Work
             </Button>
           </div>

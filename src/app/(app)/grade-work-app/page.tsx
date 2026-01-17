@@ -64,7 +64,7 @@ export default function GradeWorkPage() {
                       </p>
                     </div>
                     <Link
-                      href={`/grade-work/${area.key}`}
+                      href={`/grade-work-app/${area.key}`}
                       className="text-xs font-medium text-text-muted underline underline-offset-4 hover:text-text-main"
                     >
                       Open

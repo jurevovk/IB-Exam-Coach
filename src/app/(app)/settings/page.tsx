@@ -1,100 +1,63 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
-import { useAuth } from "@/components/auth/AuthProvider";
-import { SubjectLevelRow } from "@/components/subjects/SubjectLevelRow";
-import { BackButton } from "@/components/ui/BackButton";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { subjects } from "@/lib/subjects";
-import type { Profile } from "@/lib/storage";
+import { cn } from "@/lib/cn";
+import { getJSON, setJSON } from "@/lib/storage";
 import { useRequireAuth } from "@/lib/useRequireAuth";
 
-const sessionOptions = [
-  "May 2026",
-  "Nov 2026",
-  "May 2027",
-  "Nov 2027",
-  "Custom",
-];
+const THEME_KEY = "ibec_theme_v1";
+const MOTION_KEY = "ibec_reduce_motion_v1";
+const CHAT_KEY = "ibec_ask_ai_chat_v1";
+const USER_SETTINGS_KEY = "ibec_user_settings_v1";
+
+type ThemeOption = "light" | "dark" | "system";
 
 export default function SettingsPage() {
-  const { ready, profile } = useRequireAuth();
-  const { user, updateProfile } = useAuth();
+  const { ready } = useRequireAuth();
+  const [theme, setTheme] = useState<ThemeOption>("system");
+  const [reduceMotion, setReduceMotion] = useState(false);
+  const [cleared, setCleared] = useState(false);
 
-  if (!ready || !profile || !user) {
-    return null;
-  }
-
-  return (
-    <SettingsForm profile={profile} user={user} updateProfile={updateProfile} />
-  );
-}
-
-type SettingsFormProps = {
-  profile: Profile;
-  user: string;
-  updateProfile: (profile: Profile) => void;
-};
-
-function SettingsForm({ profile, user, updateProfile }: SettingsFormProps) {
-  const isPreset = sessionOptions.includes(profile.examSession);
-  const [name, setName] = useState(profile.name);
-  const [sessionChoice, setSessionChoice] = useState(
-    isPreset ? profile.examSession : "Custom"
-  );
-  const [customSession, setCustomSession] = useState(
-    isPreset ? "" : profile.examSession
-  );
-  const [selectedSubjects, setSelectedSubjects] = useState(profile.subjects);
-  const [saved, setSaved] = useState(false);
-
-  const effectiveSession =
-    sessionChoice === "Custom" ? customSession.trim() : sessionChoice;
-
-  const subjectIconMap = useMemo(
-    () => new Map(subjects.map((subject) => [subject.key, subject.icon])),
-    []
-  );
-
-  const availableSubjects = useMemo(() => {
-    const selectedKeys = new Set(selectedSubjects.map((subject) => subject.key));
-    return subjects.filter((subject) => !selectedKeys.has(subject.key));
-  }, [selectedSubjects]);
-
-  const updateLevel = (key: string, level: "hl" | "sl") => {
-    setSelectedSubjects((prev) =>
-      prev.map((subject) =>
-        subject.key === key ? { ...subject, level } : subject
-      )
-    );
-  };
-
-  const removeSubject = (key: string) => {
-    setSelectedSubjects((prev) =>
-      prev.filter((subject) => subject.key !== key)
-    );
-  };
-
-  const addSubject = (key: string, name: string) => {
-    setSelectedSubjects((prev) => [...prev, { key, name, level: "hl" }]);
-  };
-
-  const handleSave = () => {
-    if (!user || !effectiveSession) {
+  useEffect(() => {
+    if (!ready) {
       return;
     }
 
-    updateProfile({
-      email: user,
-      name: name.trim() || profile.name,
-      examSession: effectiveSession,
-      subjects: selectedSubjects,
-    });
-    setSaved(true);
-    window.setTimeout(() => setSaved(false), 2000);
+    setTheme(getJSON<ThemeOption>(THEME_KEY, "system"));
+    setReduceMotion(getJSON<boolean>(MOTION_KEY, false));
+  }, [ready]);
+
+  const handleThemeChange = (value: ThemeOption) => {
+    setTheme(value);
+    setJSON(THEME_KEY, value);
   };
+
+  const toggleReduceMotion = () => {
+    const next = !reduceMotion;
+    setReduceMotion(next);
+    setJSON(MOTION_KEY, next);
+  };
+
+  const handleClear = () => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    [THEME_KEY, MOTION_KEY, CHAT_KEY, USER_SETTINGS_KEY].forEach((key) =>
+      window.localStorage.removeItem(key)
+    );
+    setTheme("system");
+    setReduceMotion(false);
+    setCleared(true);
+    window.setTimeout(() => setCleared(false), 2000);
+  };
+
+  if (!ready) {
+    return null;
+  }
 
   return (
     <main className="min-h-screen py-10 sm:py-16">
@@ -102,125 +65,90 @@ function SettingsForm({ profile, user, updateProfile }: SettingsFormProps) {
         <section className="relative overflow-hidden rounded-[28px] border border-border bg-white/70 p-8 shadow-soft backdrop-blur-sm sm:p-10 lg:p-12">
           <div className="absolute -right-24 top-[-120px] h-72 w-72 rounded-full bg-[radial-gradient(circle_at_center,rgba(47,102,255,0.18),rgba(234,241,255,0)_70%)] blur-3xl" />
           <div className="relative space-y-8">
-            <BackButton />
             <header className="space-y-2">
               <h1 className="font-heading text-3xl font-semibold text-text-main sm:text-4xl">
                 Settings
               </h1>
               <p className="text-sm text-text-secondary">
-                Update your exam session and subjects anytime.
+                Tune your experience for focus and comfort.
               </p>
             </header>
 
-            <div className="space-y-4">
+            <div className="grid gap-6 lg:grid-cols-2">
               <div className="rounded-2xl border border-border/60 bg-white/70 p-5 shadow-sm">
-                <p className="text-sm font-medium text-text-secondary">Name</p>
-                <div className="mt-4">
-                  <input
-                    value={name}
-                    onChange={(event) => setName(event.target.value)}
-                    placeholder="Your name"
-                    className="w-full rounded-xl border border-border/70 bg-white/80 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
-                  />
+                <p className="text-sm font-medium text-text-secondary">
+                  Theme
+                </p>
+                <div className="mt-4 inline-flex items-center rounded-full border border-border/60 bg-white/80 p-1 shadow-sm">
+                  {(["light", "dark", "system"] as ThemeOption[]).map(
+                    (option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => handleThemeChange(option)}
+                        className={cn(
+                          "rounded-full px-4 py-2 text-xs font-semibold transition",
+                          theme === option
+                            ? "bg-white text-text-main shadow-sm"
+                            : "text-text-muted hover:text-text-main"
+                        )}
+                      >
+                        {option[0].toUpperCase() + option.slice(1)}
+                      </button>
+                    )
+                  )}
                 </div>
               </div>
 
               <div className="rounded-2xl border border-border/60 bg-white/70 p-5 shadow-sm">
                 <p className="text-sm font-medium text-text-secondary">
-                  Exam session
+                  Reduce motion
                 </p>
-                <div className="mt-4 space-y-3 sm:flex sm:items-center sm:gap-3 sm:space-y-0">
-                  <select
-                    value={sessionChoice}
-                    onChange={(event) => setSessionChoice(event.target.value)}
-                    className="w-full rounded-xl border border-border/70 bg-white/80 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20 sm:max-w-xs"
+                <div className="mt-4 flex items-center justify-between">
+                  <span className="text-xs text-text-muted">
+                    Minimize motion effects and transitions.
+                  </span>
+                  <button
+                    type="button"
+                    onClick={toggleReduceMotion}
+                    className={cn(
+                      "inline-flex h-9 w-16 items-center rounded-full border border-border/60 px-1 transition",
+                      reduceMotion
+                        ? "bg-primary/20 text-primary"
+                        : "bg-white/80 text-text-muted"
+                    )}
+                    aria-pressed={reduceMotion}
                   >
-                    {sessionOptions.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                  {sessionChoice === "Custom" ? (
-                    <input
-                      value={customSession}
-                      onChange={(event) =>
-                        setCustomSession(event.target.value)
-                      }
-                      placeholder="e.g. May 2028"
-                      className="w-full rounded-xl border border-border/70 bg-white/80 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+                    <span
+                      className={cn(
+                        "h-7 w-7 rounded-full bg-white shadow transition",
+                        reduceMotion ? "translate-x-6" : "translate-x-0"
+                      )}
                     />
-                  ) : null}
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <h2 className="text-sm font-semibold text-text-secondary">
-                  Selected subjects
-                </h2>
-                {selectedSubjects.length ? (
-                  <div className="space-y-3">
-                    {selectedSubjects.map((subject) => (
-                      <SubjectLevelRow
-                        key={subject.key}
-                        subject={{
-                          ...subject,
-                          icon: subjectIconMap.get(subject.key),
-                        }}
-                        onLevelChange={updateLevel}
-                        onRemove={removeSubject}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="rounded-2xl border border-dashed border-border/70 bg-white/60 p-6 text-sm text-text-muted">
-                    No subjects selected yet. Add one below.
-                  </div>
-                )}
-              </div>
-
-              <div className="space-y-3">
-                <h2 className="text-sm font-semibold text-text-secondary">
-                  Add subjects
-                </h2>
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                  {availableSubjects.map((subject) => (
-                    <button
-                      key={subject.key}
-                      type="button"
-                      onClick={() => addSubject(subject.key, subject.name)}
-                      className="rounded-2xl border border-border/60 bg-white/70 p-4 text-left text-sm font-medium text-text-main shadow-sm transition hover:-translate-y-[1px] hover:border-border"
-                    >
-                      {subject.name}
-                    </button>
-                  ))}
-                  {!availableSubjects.length ? (
-                    <div className="rounded-2xl border border-dashed border-border/70 bg-white/60 p-4 text-sm text-text-muted">
-                      All subjects added.
-                    </div>
-                  ) : null}
+                  </button>
                 </div>
               </div>
             </div>
 
-            <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
-              {saved ? (
-                <p className="text-sm font-medium text-emerald-600">
-                  Settings saved.
+            <div className="flex flex-col items-start justify-between gap-3 rounded-2xl border border-border/60 bg-white/70 p-5 shadow-sm sm:flex-row sm:items-center">
+              <div>
+                <p className="text-sm font-semibold text-text-main">
+                  Clear local data
                 </p>
-              ) : (
-                <span className="text-xs text-text-muted">
-                  Changes apply immediately to your dashboard.
-                </span>
-              )}
-              <Button
-                className="w-full shadow sm:w-auto"
-                onClick={handleSave}
-                disabled={!effectiveSession}
-              >
-                Save changes
+                <p className="text-xs text-text-muted">
+                  Resets theme, motion, and chat history for this device.
+                </p>
+              </div>
+              <Button variant="secondary" onClick={handleClear}>
+                Clear data
               </Button>
             </div>
+
+            {cleared ? (
+              <p className="text-sm font-medium text-emerald-600">
+                Local data cleared.
+              </p>
+            ) : null}
           </div>
         </section>
       </Container>

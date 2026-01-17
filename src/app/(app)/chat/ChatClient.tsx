@@ -26,8 +26,8 @@ export default function ChatClient() {
             </p>
           </div>
           <div className="mt-6">
-            <Button href="/subjects" variant="secondary">
-              Back to Subjects
+            <Button href="/practice" variant="secondary">
+              Back to Practice
             </Button>
           </div>
         </Card>

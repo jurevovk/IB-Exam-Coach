@@ -24,7 +24,7 @@ export default function TokGradePage() {
             This is a placeholder for TOK grading.
           </p>
           <div className="mt-6">
-            <Button href="/grade-work" variant="secondary">
+            <Button href="/grade-work-app" variant="secondary">
               Back to Grade Work
             </Button>
           </div>

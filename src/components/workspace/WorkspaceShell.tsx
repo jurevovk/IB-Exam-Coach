@@ -1,12 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-
-import { useAuth } from "@/components/auth/AuthProvider";
 import { MessagesPanel } from "@/components/app/MessagesPanel";
 import { NotificationsPanel } from "@/components/app/NotificationsPanel";
-import { Button } from "@/components/ui/Button";
+import { AvatarMenu } from "@/components/app/AvatarMenu";
 import { cn } from "@/lib/cn";
 import { getUnreadCoachState, seedMessagesIfEmpty } from "@/lib/messages";
 import {
@@ -21,9 +18,7 @@ type WorkspaceShellProps = {
 };
 
 export function WorkspaceShell({ sidebar, children }: WorkspaceShellProps) {
-  const router = useRouter();
   const { ready, profile } = useRequireAuth();
-  const { logout } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [messagesOpen, setMessagesOpen] = useState(false);
@@ -47,11 +42,6 @@ export function WorkspaceShell({ sidebar, children }: WorkspaceShellProps) {
   if (!ready || !profile) {
     return null;
   }
-
-  const handleLogout = () => {
-    logout();
-    router.replace("/login");
-  };
 
   const openNotifications = () => {
     setNotificationsOpen(true);
@@ -111,12 +101,7 @@ export function WorkspaceShell({ sidebar, children }: WorkspaceShellProps) {
           <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-primary" />
         ) : null}
       </button>
-      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white shadow">
-        {profile.name.slice(0, 1).toUpperCase()}
-      </div>
-      <Button className="px-4 py-2 text-xs" variant="secondary" onClick={handleLogout}>
-        Logout
-      </Button>
+      <AvatarMenu />
     </>
   );
 
@@ -191,16 +176,7 @@ export function WorkspaceShell({ sidebar, children }: WorkspaceShellProps) {
                 <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-primary" />
               ) : null}
             </button>
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-xs font-semibold text-white shadow">
-              {profile.name.slice(0, 1).toUpperCase()}
-            </div>
-            <Button
-              className="px-3 py-2 text-[11px]"
-              variant="secondary"
-              onClick={handleLogout}
-            >
-              Logout
-            </Button>
+            <AvatarMenu compact />
           </div>
         </div>
       </div>
