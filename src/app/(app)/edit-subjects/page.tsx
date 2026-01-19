@@ -243,7 +243,7 @@ export default function EditSubjectsPage() {
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
               {saved ? (
                 <p className="text-sm font-medium text-emerald-600">
-                  Saved ✅
+                  Saved.
                 </p>
               ) : (
                 <span className="text-xs text-text-muted">

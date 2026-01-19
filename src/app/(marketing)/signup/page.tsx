@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { useAuth } from "@/components/auth/AuthProvider";
 import { MarketingPanel } from "@/components/marketing/MarketingPanel";
@@ -12,7 +12,9 @@ import { isProfileComplete } from "@/lib/storage";
 
 export default function SignupPage() {
   const router = useRouter();
+  const pathname = usePathname();
   const { ready, user, profile, signup } = useAuth();
+  const hasRedirected = useRef(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,10 +25,16 @@ export default function SignupPage() {
       return;
     }
 
-    if (user) {
+    if (user && !hasRedirected.current) {
+      hasRedirected.current = true;
+      console.log("redirecting because already authenticated on signup", {
+        path: pathname,
+        ready,
+        user,
+      });
       router.replace(isProfileComplete(profile) ? "/dashboard" : "/onboarding");
     }
-  }, [ready, user, profile, router]);
+  }, [ready, user, profile, router, pathname]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

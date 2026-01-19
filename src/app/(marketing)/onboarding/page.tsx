@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 
 import { useAuth } from "@/components/auth/AuthProvider";
 import { MarketingPanel } from "@/components/marketing/MarketingPanel";
@@ -25,8 +25,10 @@ const sessionOptions = [
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const pathname = usePathname();
   const { ready, profile } = useRequireAuth({ requireProfile: false });
   const { user, updateProfile, profile: authProfile } = useAuth();
+  const hasRedirected = useRef(false);
   const [step, setStep] = useState<Step>(1);
   const [sessionChoice, setSessionChoice] = useState(sessionOptions[0]);
   const [customSession, setCustomSession] = useState("");
@@ -39,10 +41,16 @@ export default function OnboardingPage() {
       return;
     }
 
-    if (isProfileComplete(profile)) {
+    if (isProfileComplete(profile) && !hasRedirected.current) {
+      hasRedirected.current = true;
+      console.log("redirecting because onboarding already complete", {
+        path: pathname,
+        ready,
+        user,
+      });
       router.replace("/dashboard");
     }
-  }, [ready, profile, router]);
+  }, [ready, profile, router, pathname, user]);
 
   const effectiveSession =
     sessionChoice === "Custom" ? customSession.trim() : sessionChoice;

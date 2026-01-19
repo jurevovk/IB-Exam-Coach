@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -70,6 +70,7 @@ const resolveQuestion = (session: PracticeSession): PracticeQuestion => {
 
 export default function PracticeWritePage() {
   const router = useRouter();
+  const pathname = usePathname();
   const [session, setSession] = useState<PracticeSession | null>(null);
   const [question, setQuestion] = useState<PracticeQuestion | null>(null);
   const [attemptId, setAttemptId] = useState<string | null>(null);
@@ -81,6 +82,7 @@ export default function PracticeWritePage() {
   const [showStructureGuide, setShowStructureGuide] = useState(false);
   const [showGuidance, setShowGuidance] = useState(false);
   const timeSpentRef = useRef(0);
+  const hasRedirected = useRef(false);
 
   useEffect(() => {
     timeSpentRef.current = timeSpent;
@@ -89,7 +91,13 @@ export default function PracticeWritePage() {
   useEffect(() => {
     const storedSession = getLastSession();
     if (!storedSession) {
-      router.replace("/practice/setup");
+      if (!hasRedirected.current) {
+        hasRedirected.current = true;
+        console.log("redirecting because missing practice session", {
+          path: pathname,
+        });
+        router.replace("/practice/setup");
+      }
       return;
     }
 
@@ -122,7 +130,7 @@ export default function PracticeWritePage() {
     }
 
     setShowGuidance(getRewriteMode());
-  }, [router]);
+  }, [router, pathname]);
 
   const wordCount = useMemo(() => countWords(draft), [draft]);
 
