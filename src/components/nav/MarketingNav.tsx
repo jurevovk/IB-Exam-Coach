@@ -19,13 +19,13 @@ export function MarketingNav() {
   const isLoggedIn = ready && Boolean(user);
 
   return (
-    <nav className="sticky top-0 z-40 w-full border-b border-border/70 bg-white/70 backdrop-blur">
+    <nav className="surface sticky top-0 z-40 w-full border-b backdrop-blur">
       <div className="mx-auto flex h-[72px] max-w-[1200px] items-center justify-between gap-6 px-6 lg:px-12">
         <Link href="/" className="flex items-center gap-3">
           <span className="flex h-11 w-11 items-center justify-center rounded-[14px] shadow-[0_12px_30px_-18px_rgba(47,102,255,0.7)]">
             <Image
               src="/logo.png"
-              alt="IB Exam Coach logo"
+              alt="Exam Coach logo"
               width={44}
               height={44}
               className="h-11 w-11 rounded-[14px] object-cover"
@@ -55,8 +55,8 @@ export function MarketingNav() {
               Dashboard
             </Button>
           ) : (
-            <Button href="/login" className="px-5 py-3 shadow">
-              Start Practicing
+            <Button href="/signup" className="px-5 py-3 shadow">
+              Start free
             </Button>
           )}
         </div>

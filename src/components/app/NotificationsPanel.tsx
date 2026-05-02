@@ -20,11 +20,11 @@ type NotificationsPanelProps = {
 };
 
 const kindStyles: Record<string, string> = {
-  info: "bg-sky-100 text-sky-600",
-  success: "bg-emerald-100 text-emerald-600",
-  warning: "bg-amber-100 text-amber-600",
-  practice: "bg-blue-100 text-blue-600",
-  report: "bg-indigo-100 text-indigo-600",
+  info: "state-info",
+  success: "state-success",
+  warning: "state-warning",
+  practice: "state-info",
+  report: "state-info",
 };
 
 const kindIcons: Record<string, string> = {
@@ -37,7 +37,20 @@ const kindIcons: Record<string, string> = {
 
 const formatTime = (value: string) => {
   const date = new Date(value);
-  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const diffMinutes = Math.max(
+    1,
+    Math.round((Date.now() - date.getTime()) / 60000)
+  );
+
+  if (diffMinutes < 60) {
+    return `${diffMinutes}m ago`;
+  }
+
+  if (diffMinutes < 60 * 24) {
+    return `${Math.round(diffMinutes / 60)}h ago`;
+  }
+
+  return date.toLocaleDateString([], { month: "short", day: "numeric" });
 };
 
 export function NotificationsPanel({
@@ -45,11 +58,17 @@ export function NotificationsPanel({
   onClose,
   onUnreadChange,
 }: NotificationsPanelProps) {
-  const [items, setItems] = useState<NotificationItem[]>([]);
+  const [items, setItems] = useState<NotificationItem[]>(() => {
+    seedNotificationsIfEmpty();
+    return getNotifications();
+  });
 
   useEffect(() => {
     seedNotificationsIfEmpty();
-    setItems(getNotifications());
+    const timeout = window.setTimeout(() => {
+      setItems(getNotifications());
+    }, 0);
+    return () => window.clearTimeout(timeout);
   }, [open]);
 
   useEffect(() => {
@@ -70,7 +89,7 @@ export function NotificationsPanel({
     <SlideOver open={open} onClose={onClose} title="Notifications">
       <div className="flex items-center justify-between">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
-          Latest updates
+          Actionable updates
         </p>
         <Button className="px-3 py-2 text-xs" variant="secondary" onClick={handleMarkAll}>
           Mark all read
@@ -84,10 +103,10 @@ export function NotificationsPanel({
               key={item.id}
               type="button"
               onClick={() => handleMarkRead(item.id)}
-              className="flex w-full items-start gap-3 rounded-2xl border border-border/60 bg-white/80 p-4 text-left shadow-sm transition hover:border-border"
+              className="surface-muted flex w-full items-start gap-3 rounded-2xl border p-4 text-left shadow-sm transition hover:border-border"
             >
               <span
-                className={`flex h-10 w-10 items-center justify-center rounded-full ${kindStyles[item.kind] ?? "bg-gray-100 text-gray-600"}`}
+                className={`flex h-10 w-10 items-center justify-center rounded-full border ${kindStyles[item.kind] ?? "state-info"}`}
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -119,7 +138,7 @@ export function NotificationsPanel({
             </button>
           ))
         ) : (
-          <div className="rounded-2xl border border-dashed border-border/60 bg-white/70 p-6 text-center text-sm text-text-muted">
+          <div className="surface-muted rounded-2xl border border-dashed p-6 text-center text-sm text-text-muted">
             You are all caught up.
           </div>
         )}

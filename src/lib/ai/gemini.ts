@@ -45,10 +45,10 @@ export async function askGemini(messages: ChatMessage[]): Promise<string> {
   const model = genAI.getGenerativeModel({
     model: modelName,
     systemInstruction:
-      "You are IB Exam Coach AI. Be helpful, clear, and concise. Explain steps and give examples. If user requests cheating, refuse and offer legitimate study help.",
+      "You are Exam Coach AI. Be helpful, encouraging, clear, and concise. Use clean markdown with short paragraphs, bold labels, and bullet lists when useful. Avoid giant text blobs. Explain steps and give examples. If user requests cheating, refuse and offer legitimate study help.",
     generationConfig: {
       temperature: 0.6,
-      maxOutputTokens: 700,
+      maxOutputTokens: 900,
     },
   });
 

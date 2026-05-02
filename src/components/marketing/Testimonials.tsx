@@ -4,13 +4,13 @@ const testimonials = [
   {
     quote:
       "The examiner report tells me exactly what to fix. I jumped from a 4 to a 6 in two weeks.",
-    name: "Lina P.",
+    name: "Marko S.",
     detail: "Economics HL",
   },
   {
     quote:
       "The Band Jump Plan is clear and calm. It feels like a coach sitting next to me.",
-    name: "Marco S.",
+    name: "Lina W.",
     detail: "Geography SL",
   },
   {
@@ -38,7 +38,7 @@ export function Testimonials() {
           {testimonials.map((item) => (
             <figure
               key={item.name}
-              className="flex h-full flex-col justify-between rounded-2xl border border-border bg-white/80 p-6 shadow-soft"
+              className="flex h-full flex-col justify-between rounded-2xl border border-border bg-card/85 p-6 shadow-soft"
             >
               <blockquote className="text-sm text-text-secondary">
                 “{item.quote}”

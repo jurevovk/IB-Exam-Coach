@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { useAuth } from "@/components/auth/AuthProvider";
 import { MarketingPanel } from "@/components/marketing/MarketingPanel";
@@ -12,7 +12,6 @@ import { isProfileComplete } from "@/lib/storage";
 
 export default function LoginPage() {
   const router = useRouter();
-  const pathname = usePathname();
   const { ready, user, profile, login } = useAuth();
   const hasRedirected = useRef(false);
   const [email, setEmail] = useState("");
@@ -26,14 +25,9 @@ export default function LoginPage() {
 
     if (user && !hasRedirected.current) {
       hasRedirected.current = true;
-      console.log("redirecting because already authenticated on login", {
-        path: pathname,
-        ready,
-        user,
-      });
       router.replace(isProfileComplete(profile) ? "/dashboard" : "/onboarding");
     }
-  }, [ready, user, profile, router, pathname]);
+  }, [ready, user, profile, router]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -69,7 +63,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="you@example.com"
-                className="w-full rounded-xl border border-border/70 bg-white/80 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+                className="w-full rounded-xl border border-border/70 bg-card/85 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
                 required
               />
             </div>
@@ -83,7 +77,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder="Your password"
-                className="w-full rounded-xl border border-border/70 bg-white/80 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+                className="w-full rounded-xl border border-border/70 bg-card/85 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
                 required
               />
             </div>

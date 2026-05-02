@@ -24,7 +24,7 @@ const seedMessages: MessageItem[] = [
   {
     id: createId(),
     role: "coach",
-    text: "Welcome to IB Exam Coach. Tell me what topic you want to improve today.",
+    text: "Welcome to Exam Coach. Tell me what topic you want to improve today.",
     createdAt: new Date(Date.now() - 1000 * 60 * 20).toISOString(),
     read: false,
   },

@@ -26,21 +26,21 @@ export function MessagesPanel({
   onClose,
   onUnreadChange,
 }: MessagesPanelProps) {
-  const [messages, setMessages] = useState<MessageItem[]>([]);
+  const [messages, setMessages] = useState<MessageItem[]>(() => {
+    seedMessagesIfEmpty();
+    return getMessages();
+  });
   const [draft, setDraft] = useState("");
   const threadRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     seedMessagesIfEmpty();
-    setMessages(getMessages());
-  }, [open]);
-
-  useEffect(() => {
-    if (open) {
-      const updated = markAllCoachRead();
+    const timeout = window.setTimeout(() => {
+      const updated = open ? markAllCoachRead() : getMessages();
       setMessages(updated);
       onUnreadChange?.(getUnreadCoachState());
-    }
+    }, 0);
+    return () => window.clearTimeout(timeout);
   }, [open, onUnreadChange]);
 
   useEffect(() => {
@@ -81,7 +81,7 @@ export function MessagesPanel({
     <SlideOver open={open} onClose={onClose} title="Messages">
       <div
         ref={threadRef}
-        className="flex h-[60vh] flex-col gap-3 overflow-y-auto rounded-2xl border border-border/60 bg-white/80 p-4 shadow-sm"
+        className="surface-muted flex h-[60vh] flex-col gap-3 overflow-y-auto rounded-2xl border p-4 shadow-sm"
       >
         {messages.length ? (
           messages.map((message) => (
@@ -95,7 +95,7 @@ export function MessagesPanel({
                 className={`max-w-[75%] rounded-2xl px-4 py-3 text-sm shadow-sm ${
                   message.role === "user"
                     ? "bg-primary text-white"
-                    : "bg-white text-text-main"
+                    : "surface-strong border border-border/60 text-text-main"
                 }`}
               >
                 <p>{message.text}</p>
@@ -114,7 +114,7 @@ export function MessagesPanel({
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
           placeholder="Ask about your next essay..."
-          className="flex-1 rounded-xl border border-border/70 bg-white/80 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+          className="field flex-1 rounded-xl border px-4 py-3 text-sm shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
         />
         <Button className="px-4 py-3" onClick={handleSend} disabled={!canSend}>
           Send

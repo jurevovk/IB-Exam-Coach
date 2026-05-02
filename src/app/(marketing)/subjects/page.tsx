@@ -25,7 +25,7 @@ export default function SubjectsMarketingPage() {
   return (
     <main className="py-12 sm:py-16">
       <Container>
-        <section className="relative overflow-hidden rounded-[28px] border border-border bg-white/80 p-8 shadow-soft backdrop-blur-sm sm:p-10 lg:p-12">
+        <section className="relative overflow-hidden rounded-[28px] border border-border bg-card/85 p-8 shadow-soft backdrop-blur-sm sm:p-10 lg:p-12">
           <div className="absolute -right-20 top-[-120px] h-64 w-64 rounded-full bg-[radial-gradient(circle_at_center,rgba(47,102,255,0.18),rgba(234,241,255,0)_70%)] blur-3xl" />
           <div className="relative space-y-8">
             <header className="space-y-3">
@@ -33,11 +33,12 @@ export default function SubjectsMarketingPage() {
                 Subjects
               </p>
               <h1 className="font-heading text-3xl font-semibold text-text-main sm:text-4xl">
-                IB Subjects
+                Choose the subjects you actually study.
               </h1>
               <p className="max-w-2xl text-sm text-text-secondary sm:text-base">
-                Explore every supported subject and get examiner-style practice
-                prompts in minutes.
+                Exam Coach starts with your selected subjects, levels, and exam
+                session. Economics is the deepest seeded subject today, with
+                the same architecture ready for the rest.
               </p>
             </header>
 
@@ -49,10 +50,10 @@ export default function SubjectsMarketingPage() {
                 return (
                   <Card
                     key={subject.key}
-                    className="flex h-full flex-col gap-4 rounded-2xl border-border/60 bg-white/80 p-5 shadow-soft transition hover:-translate-y-[1px]"
+                    className="flex h-full flex-col gap-4 rounded-2xl border-border/60 bg-card/85 p-5 shadow-soft transition hover:-translate-y-[1px]"
                   >
                     <div className="flex items-start gap-3">
-                      <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-primary shadow-sm">
+                      <span className="flex h-11 w-11 items-center justify-center rounded-full bg-card text-primary shadow-sm">
                         <Icon name={subject.icon} size={18} />
                       </span>
                       <div>
@@ -66,10 +67,15 @@ export default function SubjectsMarketingPage() {
                     </div>
 
                     <div className="flex flex-wrap gap-2">
-                      <span className="rounded-full border border-border/60 bg-white/80 px-2.5 py-1 text-[11px] font-semibold text-text-muted">
+                      {subject.key === "economics" ? (
+                        <span className="rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary">
+                          Deep Learn beta
+                        </span>
+                      ) : null}
+                      <span className="rounded-full border border-border/60 bg-card/85 px-2.5 py-1 text-[11px] font-semibold text-text-muted">
                         HL
                       </span>
-                      <span className="rounded-full border border-border/60 bg-white/80 px-2.5 py-1 text-[11px] font-semibold text-text-muted">
+                      <span className="rounded-full border border-border/60 bg-card/85 px-2.5 py-1 text-[11px] font-semibold text-text-muted">
                         SL
                       </span>
                     </div>
@@ -84,7 +90,7 @@ export default function SubjectsMarketingPage() {
               })}
             </div>
 
-            <div className="flex flex-col items-start justify-between gap-4 rounded-2xl border border-primary/15 bg-white/80 p-6 shadow-soft sm:flex-row sm:items-center">
+            <div className="flex flex-col items-start justify-between gap-4 rounded-2xl border border-primary/15 bg-card/85 p-6 shadow-soft sm:flex-row sm:items-center">
               <div>
                 <p className="text-sm font-semibold text-text-main">
                   Ready to practice?

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/Button";
 export function Hero() {
   return (
     <section className="flex flex-col items-center gap-7 text-center">
-      <span className="rounded-full border border-border/60 bg-white/70 px-4 py-1 text-xs font-medium text-text-muted shadow-sm backdrop-blur">
+      <span className="rounded-full border border-border/60 bg-card/80 px-4 py-1 text-xs font-medium text-text-muted shadow-sm backdrop-blur">
         New: Examiner-style reports
       </span>
       <div className="space-y-4">

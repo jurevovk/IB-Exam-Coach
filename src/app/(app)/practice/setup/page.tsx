@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/Button";
@@ -36,6 +36,31 @@ const createId = () => {
   return `session-${Date.now()}`;
 };
 
+type PracticeSetupForm = Omit<PracticeSession, "id" | "questionId">;
+
+const getInitialForm = (): PracticeSetupForm => {
+  const lastSession = getLastSession();
+
+  return {
+    subject: lastSession?.subject ?? "",
+    level: lastSession?.level ?? "hl",
+    paper: lastSession?.paper ?? papers[0],
+    topic: lastSession?.topic || "Any",
+    marks: lastSession?.marks || 15,
+    mode: lastSession?.mode ?? "timed",
+    difficulty: lastSession?.difficulty ?? "medium",
+    commandTerm: lastSession?.commandTerm ?? "Discuss",
+    goalMode: lastSession?.goalMode ?? "band-jump",
+  };
+};
+
+const getTopicOptions = (subject: string) => {
+  const topics = questionBank
+    .filter((question) => question.subject === subject)
+    .map((question) => question.topic);
+  return ["Any", ...Array.from(new Set(topics))];
+};
+
 export default function PracticeSetupPage() {
   const router = useRouter();
   const { profile } = useAuth();
@@ -55,58 +80,15 @@ export default function PracticeSetupPage() {
     }));
   }, [profile]);
 
-  const [subject, setSubject] = useState("");
-  const [level, setLevel] = useState<PracticeSession["level"]>("hl");
-  const [paper, setPaper] = useState(papers[0]);
-  const [topic, setTopic] = useState("Any");
-  const [marks, setMarks] = useState(15);
-  const [mode, setMode] = useState<PracticeSession["mode"]>("timed");
-  const [difficulty, setDifficulty] =
-    useState<PracticeSession["difficulty"]>("medium");
-  const [commandTerm, setCommandTerm] = useState("Discuss");
-  const [goalMode, setGoalMode] =
-    useState<PracticeSession["goalMode"]>("band-jump");
-
-  useEffect(() => {
-    const lastSession = getLastSession();
-    if (lastSession) {
-      setSubject(lastSession.subject);
-      setLevel(lastSession.level);
-      setPaper(lastSession.paper ?? papers[0]);
-      setTopic(lastSession.topic || "Any");
-      setMarks(lastSession.marks || 15);
-      setMode(lastSession.mode ?? "timed");
-      setDifficulty(lastSession.difficulty ?? "medium");
-      setCommandTerm(lastSession.commandTerm ?? "Discuss");
-      setGoalMode(lastSession.goalMode ?? "band-jump");
-      return;
-    }
-
-    if (subjectOptions.length) {
-      setSubject(subjectOptions[0].key);
-      setLevel(subjectOptions[0].level);
-    }
-  }, [subjectOptions]);
-
-  useEffect(() => {
-    const match = subjectOptions.find((option) => option.key === subject);
-    if (match) {
-      setLevel(match.level);
-    }
-  }, [subject, subjectOptions]);
+  const [form, setForm] = useState<PracticeSetupForm>(() => getInitialForm());
+  const subject = form.subject || subjectOptions[0]?.key || "";
+  const level =
+    subjectOptions.find((option) => option.key === subject)?.level ?? form.level;
 
   const topicOptions = useMemo(() => {
-    const topics = questionBank
-      .filter((question) => question.subject === subject)
-      .map((question) => question.topic);
-    return ["Any", ...Array.from(new Set(topics))];
+    return getTopicOptions(subject);
   }, [subject]);
-
-  useEffect(() => {
-    if (!topicOptions.includes(topic)) {
-      setTopic("Any");
-    }
-  }, [topic, topicOptions]);
+  const topic = topicOptions.includes(form.topic) ? form.topic : "Any";
 
   const commandTermOptions = useMemo(() => {
     const terms = questionBank
@@ -124,13 +106,13 @@ export default function PracticeSetupPage() {
       id: createId(),
       subject,
       level,
-      paper,
+      paper: form.paper,
       topic,
-      marks,
-      mode,
-      difficulty,
-      commandTerm,
-      goalMode,
+      marks: form.marks,
+      mode: form.mode,
+      difficulty: form.difficulty,
+      commandTerm: form.commandTerm,
+      goalMode: form.goalMode,
     };
 
     setLastSession(session);
@@ -153,14 +135,26 @@ export default function PracticeSetupPage() {
           </p>
         </header>
 
-        <Card className="border-border bg-white/70 shadow-soft">
+        <Card className="border-border bg-card/80 shadow-soft">
           <div className="grid gap-5 sm:grid-cols-2">
             <label className="space-y-2 text-sm text-text-secondary">
               Subject
               <select
                 value={subject}
-                onChange={(event) => setSubject(event.target.value)}
-                className="w-full rounded-xl border border-border/70 bg-white/80 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+                onChange={(event) => {
+                  const nextSubject = event.target.value;
+                  const nextLevel =
+                    subjectOptions.find(
+                      (option) => option.key === nextSubject
+                    )?.level ?? "hl";
+
+                  setForm((prev) => ({
+                    ...prev,
+                    subject: nextSubject,
+                    level: nextLevel,
+                  }));
+                }}
+                className="w-full rounded-xl border border-border/70 bg-card/85 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
               >
                 {subjectOptions.map((option) => (
                   <option key={option.key} value={option.key}>
@@ -176,9 +170,11 @@ export default function PracticeSetupPage() {
             <label className="space-y-2 text-sm text-text-secondary">
               Paper
               <select
-                value={paper}
-                onChange={(event) => setPaper(event.target.value)}
-                className="w-full rounded-xl border border-border/70 bg-white/80 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+                value={form.paper}
+                onChange={(event) =>
+                  setForm((prev) => ({ ...prev, paper: event.target.value }))
+                }
+                className="w-full rounded-xl border border-border/70 bg-card/85 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
               >
                 {papers.map((option) => (
                   <option key={option} value={option}>
@@ -192,8 +188,10 @@ export default function PracticeSetupPage() {
               Topic
               <select
                 value={topic}
-                onChange={(event) => setTopic(event.target.value)}
-                className="w-full rounded-xl border border-border/70 bg-white/80 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+                onChange={(event) =>
+                  setForm((prev) => ({ ...prev, topic: event.target.value }))
+                }
+                className="w-full rounded-xl border border-border/70 bg-card/85 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
               >
                 {topicOptions.map((option) => (
                   <option key={option} value={option}>
@@ -206,9 +204,14 @@ export default function PracticeSetupPage() {
             <label className="space-y-2 text-sm text-text-secondary">
               Marks
               <select
-                value={marks}
-                onChange={(event) => setMarks(Number(event.target.value))}
-                className="w-full rounded-xl border border-border/70 bg-white/80 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+                value={form.marks}
+                onChange={(event) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    marks: Number(event.target.value),
+                  }))
+                }
+                className="w-full rounded-xl border border-border/70 bg-card/85 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
               >
                 {marksOptions.map((option) => (
                   <option key={option} value={option}>
@@ -221,11 +224,14 @@ export default function PracticeSetupPage() {
             <label className="space-y-2 text-sm text-text-secondary">
               Mode
               <select
-                value={mode}
+                value={form.mode}
                 onChange={(event) =>
-                  setMode(event.target.value as PracticeSession["mode"])
+                  setForm((prev) => ({
+                    ...prev,
+                    mode: event.target.value as PracticeSession["mode"],
+                  }))
                 }
-                className="w-full rounded-xl border border-border/70 bg-white/80 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+                className="w-full rounded-xl border border-border/70 bg-card/85 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
               >
                 {modes.map((option) => (
                   <option key={option} value={option}>
@@ -238,13 +244,15 @@ export default function PracticeSetupPage() {
             <label className="space-y-2 text-sm text-text-secondary">
               Difficulty
               <select
-                value={difficulty}
+                value={form.difficulty}
                 onChange={(event) =>
-                  setDifficulty(
-                    event.target.value as PracticeSession["difficulty"]
-                  )
+                  setForm((prev) => ({
+                    ...prev,
+                    difficulty: event.target
+                      .value as PracticeSession["difficulty"],
+                  }))
                 }
-                className="w-full rounded-xl border border-border/70 bg-white/80 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+                className="w-full rounded-xl border border-border/70 bg-card/85 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
               >
                 {difficulties.map((option) => (
                   <option key={option} value={option}>
@@ -257,9 +265,14 @@ export default function PracticeSetupPage() {
             <label className="space-y-2 text-sm text-text-secondary">
               Command term
               <select
-                value={commandTerm}
-                onChange={(event) => setCommandTerm(event.target.value)}
-                className="w-full rounded-xl border border-border/70 bg-white/80 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+                value={form.commandTerm}
+                onChange={(event) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    commandTerm: event.target.value,
+                  }))
+                }
+                className="w-full rounded-xl border border-border/70 bg-card/85 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
               >
                 {commandTermOptions.map((option) => (
                   <option key={option} value={option}>
@@ -275,15 +288,17 @@ export default function PracticeSetupPage() {
               <p className="text-sm font-medium text-text-secondary">
                 Goal mode
               </p>
-              <div className="mt-2 inline-flex rounded-full border border-border/60 bg-white/70 p-1 text-xs">
+              <div className="mt-2 inline-flex rounded-full border border-border/60 bg-card/80 p-1 text-xs">
                 {goalModes.map((option) => (
                   <button
                     key={option}
                     type="button"
-                    onClick={() => setGoalMode(option)}
+                    onClick={() =>
+                      setForm((prev) => ({ ...prev, goalMode: option }))
+                    }
                     className={cn(
                       "rounded-full px-4 py-1 text-xs font-semibold transition",
-                      goalMode === option
+                      form.goalMode === option
                         ? "bg-primary text-white shadow-sm"
                         : "text-text-muted hover:text-text-main"
                     )}

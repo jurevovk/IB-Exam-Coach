@@ -1,4 +1,4 @@
-export const APP_NAME = "IB Exam Coach";
+export const APP_NAME = "Exam Coach";
 
 export const NAV_LINKS = [
   { label: "Subjects", href: "/subjects" },

@@ -15,7 +15,7 @@ export function ProofStats() {
           {stats.map((stat) => (
             <div
               key={stat.label}
-              className="rounded-[18px] border border-border bg-white p-5 shadow-soft transition hover:-translate-y-[2px]"
+              className="rounded-[18px] border border-border bg-card p-5 shadow-soft transition hover:-translate-y-[2px]"
             >
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
                 {stat.label}

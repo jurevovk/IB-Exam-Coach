@@ -23,9 +23,9 @@ const variants: Record<ButtonVariant, string> = {
   primary:
     "bg-primary text-white shadow-[0_18px_40px_-26px_rgba(47,102,255,0.7)] hover:-translate-y-[1px] hover:bg-primary-hover active:translate-y-[1px] active:bg-primary-hover",
   secondary:
-    "border border-border/70 bg-white/70 text-text-main shadow-sm hover:-translate-y-[1px] hover:border-border hover:bg-white active:translate-y-[1px]",
+    "chip border text-text-main shadow-sm hover:-translate-y-[1px] hover:border-border hover:bg-card active:translate-y-[1px]",
   ghost:
-    "text-text-secondary hover:-translate-y-[1px] hover:bg-white/70 hover:text-text-main active:translate-y-[1px]",
+    "text-text-secondary hover:-translate-y-[1px] hover:bg-card/70 hover:text-text-main active:translate-y-[1px]",
 };
 
 export function Button({

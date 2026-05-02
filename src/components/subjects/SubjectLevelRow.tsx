@@ -23,9 +23,9 @@ export function SubjectLevelRow({
   onRemove,
 }: SubjectLevelRowProps) {
   return (
-    <div className="flex flex-col gap-4 rounded-xl border border-border/60 bg-white/70 p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-4 rounded-xl border border-border/60 bg-card/80 p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-center gap-3">
-        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-primary shadow-sm">
+        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-card text-primary shadow-sm">
           <Icon name={subject.icon ?? "checkCircle"} size={18} />
         </span>
         <div>
@@ -35,7 +35,7 @@ export function SubjectLevelRow({
       </div>
 
       <div className="flex items-center gap-2">
-        <div className="inline-flex items-center rounded-full border border-border/60 bg-white/70 p-1 shadow-sm">
+        <div className="inline-flex items-center rounded-full border border-border/60 bg-card/80 p-1 shadow-sm">
           {levels.map((level) => (
             <button
               key={level.value}
@@ -44,7 +44,7 @@ export function SubjectLevelRow({
               className={cn(
                 "rounded-full px-3 py-1 text-xs font-medium transition",
                 subject.level === level.value
-                  ? "bg-white text-text-main shadow-sm"
+                  ? "bg-card text-text-main shadow-sm"
                   : "text-text-muted hover:text-text-main"
               )}
             >

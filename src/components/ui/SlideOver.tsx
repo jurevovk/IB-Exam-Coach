@@ -35,20 +35,20 @@ export function SlideOver({ open, onClose, title, children }: SlideOverProps) {
         type="button"
         aria-label="Close panel"
         onClick={onClose}
-        className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/35 backdrop-blur-sm"
       />
       <div
         role="dialog"
         aria-modal="true"
         className="absolute right-0 top-0 flex h-full w-full max-w-md"
       >
-        <div className="relative ml-auto flex h-full w-full flex-col rounded-l-2xl border border-border bg-white/90 shadow-card">
+        <div className="surface-strong relative ml-auto flex h-full w-full flex-col rounded-l-2xl border shadow-card backdrop-blur">
           <div className="flex items-center justify-between border-b border-border/60 px-6 py-4">
             <h2 className="text-sm font-semibold text-text-main">{title}</h2>
             <button
               type="button"
               onClick={onClose}
-              className="rounded-full border border-border/60 bg-white/80 px-2 py-1 text-xs font-semibold text-text-muted transition hover:text-text-main"
+              className="chip rounded-full border px-2 py-1 text-xs font-semibold transition hover:text-text-main"
             >
               Close
             </button>

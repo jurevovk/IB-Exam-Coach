@@ -4,11 +4,11 @@ import { Container } from "@/components/ui/Container";
 
 export function Footer() {
   return (
-    <footer className="border-t border-border/60 bg-white/70 py-10">
+    <footer className="border-t border-border/60 bg-card/80 py-10">
       <Container>
         <div className="flex flex-col items-center justify-between gap-6 text-center text-sm text-text-muted sm:flex-row sm:text-left">
           <div>
-            <p className="font-semibold text-text-main">IB Exam Coach</p>
+            <p className="font-semibold text-text-main">Exam Coach</p>
             <p className="mt-1 text-xs">
               Not affiliated with International Baccalaureate®.
             </p>

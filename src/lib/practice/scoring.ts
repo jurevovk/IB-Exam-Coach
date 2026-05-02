@@ -81,10 +81,62 @@ export const computeScore = (
   );
   const hasEvidence =
     evidenceMarkers.some((marker) => lower.includes(marker)) || /\d/.test(lower);
+  const isEconomics = session.subject === "economics";
+  const hasEconomicsDiagram =
+    isEconomics &&
+    [
+      "diagram",
+      "curve",
+      "shift",
+      "equilibrium",
+      "deadweight",
+      "externality",
+      "ad/as",
+      "aggregate demand",
+    ].some((marker) => lower.includes(marker));
+  const hasApplication =
+    isEconomics &&
+    [
+      "article",
+      "consumer",
+      "producer",
+      "government",
+      "stakeholder",
+      "households",
+      "firms",
+      "country",
+    ].some((marker) => lower.includes(marker));
+  const hasTerminology =
+    !isEconomics ||
+    [
+      "demand",
+      "supply",
+      "elasticity",
+      "externality",
+      "inflation",
+      "unemployment",
+      "growth",
+      "trade",
+      "exchange rate",
+      "scarcity",
+      "opportunity cost",
+      "ppc",
+      "production possibilities",
+      "circular flow",
+      "free market",
+      "mixed economy",
+      "normative",
+      "positive",
+      "efficiency",
+      "equity",
+    ].some((marker) => lower.includes(marker));
 
   if (hasEvaluation) score += 1;
   if (hasConclusion) score += 1;
   if (hasEvidence) score += 1;
+  if (hasEconomicsDiagram) score += 1;
+  if (hasApplication) score += 1;
+  if (hasTerminology) score += 1;
 
   if (wordCount < target * 0.6) score -= 2;
   if (wordCount < target * 0.4) score -= 2;
@@ -123,11 +175,34 @@ export const computeScore = (
     bandJumpPlan.push("Finish with a short judgement that answers the question.");
   }
 
+  if (isEconomics) {
+    if (hasEconomicsDiagram) {
+      strengths.push("Uses diagram/model language to support the analysis.");
+    } else {
+      lostMarks.push("Diagram or model support is weak.");
+      bandJumpPlan.push("Add a relevant diagram and explain the curve shifts or welfare effects.");
+    }
+
+    if (hasApplication) {
+      strengths.push("Connects the answer to stakeholders or a real-world context.");
+    } else {
+      lostMarks.push("Application to stakeholders or article context is limited.");
+      bandJumpPlan.push("Name affected stakeholders and link each point to the real-world context.");
+    }
+
+    if (hasTerminology) {
+      strengths.push("Uses relevant Economics terminology.");
+    } else {
+      lostMarks.push("Economics terminology is not explicit enough.");
+      bandJumpPlan.push("Define the key Economics term before applying it.");
+    }
+  }
+
   return {
     score,
     gradeBand: getGradeBand(score, session.marks),
     strengths: strengths.slice(0, 3),
-    lostMarks: lostMarks.slice(0, 3),
+    lostMarks: lostMarks.slice(0, 4),
     bandJumpPlan: bandJumpPlan.slice(0, 4),
   };
 };

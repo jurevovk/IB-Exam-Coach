@@ -3,22 +3,37 @@ import { Button } from "@/components/ui/Button";
 
 const tiers = [
   {
-    name: "Starter",
+    name: "Free",
     price: "Free",
-    description: "Try examiner-style feedback with sample drills.",
-    features: ["Limited practice sets", "Basic feedback", "Community support"],
+    description: "Start with the core study cockpit and local progress.",
+    features: [
+      "Core Learn access",
+      "Limited Ask AI usage",
+      "Limited practice feedback",
+      "Local progress tracking",
+    ],
   },
   {
-    name: "Core",
-    price: "$12/mo",
-    description: "Full access to subject practice and examiner reports.",
-    features: ["All subjects", "Examiner reports", "Progress tracking"],
+    name: "Plus",
+    price: "$10/month",
+    description: "Expand practice, feedback, and AI help for weekly study.",
+    features: [
+      "Unlimited Learn access",
+      "Expanded practice feedback",
+      "Stronger AI study help",
+      "Better progress tools",
+    ],
   },
   {
     name: "Pro",
-    price: "$24/mo",
-    description: "Personalized plans and priority feedback.",
-    features: ["Everything in Core", "Priority feedback", "Study roadmap"],
+    price: "$15/month",
+    description: "Advanced grading and the strongest support for exam season.",
+    features: [
+      "Everything in Plus",
+      "Best AI support",
+      "Full advanced grading support",
+      "Premium study tools",
+    ],
   },
 ];
 
@@ -31,10 +46,11 @@ export default function PricingPage() {
             Pricing
           </p>
           <h1 className="mt-3 font-heading text-3xl font-semibold text-text-main sm:text-4xl">
-            Simple plans for every IB student
+            Simple plans for focused exam prep
           </h1>
           <p className="mt-2 text-sm text-text-secondary sm:text-base">
-            Pick the plan that matches your study rhythm and goals.
+            Public pricing matches the in-app plan switcher. Payments are not
+            active yet; plan switching is local-only for demo use.
           </p>
         </header>
 
@@ -42,7 +58,7 @@ export default function PricingPage() {
           {tiers.map((tier) => (
             <div
               key={tier.name}
-              className="flex h-full flex-col gap-6 rounded-2xl border border-border/60 bg-white/70 p-6 shadow-card"
+              className="flex h-full flex-col gap-6 rounded-[28px] border border-border/60 bg-card/90 p-6 shadow-card"
             >
               <div>
                 <p className="text-sm font-semibold text-text-main">
@@ -60,8 +76,8 @@ export default function PricingPage() {
                   <li key={feature}>• {feature}</li>
                 ))}
               </ul>
-              <Button className="mt-auto shadow" variant="secondary">
-                Choose {tier.name}
+              <Button href="/signup" className="mt-auto shadow" variant="secondary">
+                Start with {tier.name}
               </Button>
             </div>
           ))}

@@ -23,8 +23,8 @@ const visuals: Record<FeatureBlockProps["visualType"], React.ReactNode> = {
       <p className="text-xs uppercase text-white/60">Score</p>
       <p className="mt-2 text-2xl font-semibold">16/20</p>
       <div className="mt-4 space-y-2 text-xs text-white/70">
-        <div className="h-2 w-full rounded-full bg-white/15" />
-        <div className="h-2 w-3/4 rounded-full bg-white/10" />
+        <div className="h-2 w-full rounded-full bg-card/15" />
+        <div className="h-2 w-3/4 rounded-full bg-card/10" />
       </div>
     </div>
   ),
@@ -33,7 +33,7 @@ const visuals: Record<FeatureBlockProps["visualType"], React.ReactNode> = {
       {["Case study", "Evaluation", "Judgement"].map((item) => (
         <div
           key={item}
-          className="flex items-center justify-between rounded-xl border border-border/60 bg-white px-3 py-2 text-xs text-text-secondary"
+          className="flex items-center justify-between rounded-xl border border-border/60 bg-card px-3 py-2 text-xs text-text-secondary"
         >
           <span>{item}</span>
           <span className="h-2 w-2 rounded-full bg-primary" />
@@ -43,13 +43,13 @@ const visuals: Record<FeatureBlockProps["visualType"], React.ReactNode> = {
   ),
   map: (
     <div className="grid gap-2 text-xs text-text-secondary">
-      <div className="rounded-xl border border-border/60 bg-white px-3 py-2">
+      <div className="rounded-xl border border-border/60 bg-card px-3 py-2">
         Evaluation (7x)
       </div>
-      <div className="rounded-xl border border-border/60 bg-white px-3 py-2">
+      <div className="rounded-xl border border-border/60 bg-card px-3 py-2">
         Evidence (5x)
       </div>
-      <div className="rounded-xl border border-border/60 bg-white px-3 py-2">
+      <div className="rounded-xl border border-border/60 bg-card px-3 py-2">
         Conclusion (4x)
       </div>
     </div>
@@ -88,7 +88,7 @@ export function FeatureBlock({
       </div>
       <div
         className={cn(
-          "rounded-2xl border border-border bg-white/80 p-6 shadow-soft",
+          "rounded-2xl border border-border bg-card/85 p-6 shadow-soft",
           !isLeft && "lg:order-1"
         )}
       >

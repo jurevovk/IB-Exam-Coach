@@ -6,11 +6,15 @@ import { useRouter } from "next/navigation";
 
 import { useAuth } from "@/components/auth/AuthProvider";
 import { cn } from "@/lib/cn";
+import { getUserPreferences } from "@/lib/preferences";
 
 export function AccountMenu() {
   const router = useRouter();
   const { profile, logout } = useAuth();
   const [open, setOpen] = useState(false);
+  const [accountPlan, setAccountPlan] = useState(() =>
+    getUserPreferences().accountPlan
+  );
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -38,6 +42,21 @@ export function AccountMenu() {
     };
   }, []);
 
+  useEffect(() => {
+    const handlePreferencesChange = () => {
+      setAccountPlan(getUserPreferences().accountPlan);
+    };
+
+    handlePreferencesChange();
+    window.addEventListener("ibec:preferences-changed", handlePreferencesChange);
+    return () => {
+      window.removeEventListener(
+        "ibec:preferences-changed",
+        handlePreferencesChange
+      );
+    };
+  }, []);
+
   const name = profile?.name?.trim() || "Account";
   const initial = name.slice(0, 1).toUpperCase();
 
@@ -51,7 +70,7 @@ export function AccountMenu() {
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="flex items-center gap-2 rounded-full border border-border/60 bg-white/80 px-3 py-2 text-sm text-text-main shadow-sm transition hover:-translate-y-[1px]"
+        className="flex items-center gap-2 rounded-full border border-border/60 bg-card/85 px-3 py-2 text-sm text-text-main shadow-sm transition hover:-translate-y-[1px]"
         aria-haspopup="menu"
         aria-expanded={open}
       >
@@ -77,18 +96,18 @@ export function AccountMenu() {
 
       <div
         className={cn(
-          "absolute right-0 mt-2 w-48 origin-top-right rounded-xl border border-border/70 bg-white/95 p-2 text-sm shadow-card backdrop-blur",
+          "absolute right-0 mt-2 w-48 origin-top-right rounded-xl border border-border/70 bg-card/95 p-2 text-sm shadow-card backdrop-blur",
           open ? "scale-100 opacity-100" : "pointer-events-none scale-95 opacity-0"
         )}
         role="menu"
       >
         <Link
-          href="/dashboard"
+          href="/edit-subjects"
           className="block rounded-lg px-3 py-2 text-text-main transition hover:bg-bg"
           role="menuitem"
           onClick={() => setOpen(false)}
         >
-          Dashboard
+          Edit Subjects
         </Link>
         <Link
           href="/settings"
@@ -97,6 +116,14 @@ export function AccountMenu() {
           onClick={() => setOpen(false)}
         >
           Settings
+        </Link>
+        <Link
+          href="/plan"
+          className="block rounded-lg px-3 py-2 text-text-main transition hover:bg-bg"
+          role="menuitem"
+          onClick={() => setOpen(false)}
+        >
+          {accountPlan === "free" ? "Upgrade Plan" : "Manage Plan"}
         </Link>
         <button
           type="button"

@@ -28,8 +28,10 @@ export function HowItWorks() {
 
   useEffect(() => {
     if (!("IntersectionObserver" in window)) {
-      setVisible(new Array(steps.length).fill(true));
-      return;
+      const timeout = setTimeout(() => {
+        setVisible(new Array(steps.length).fill(true));
+      }, 0);
+      return () => clearTimeout(timeout);
     }
 
     const observer = new IntersectionObserver(
@@ -86,7 +88,7 @@ export function HowItWorks() {
               }}
               data-index={index}
               className={cn(
-                "rounded-2xl border border-border bg-white/80 p-6 shadow-soft transition-all duration-700",
+                "rounded-2xl border border-border bg-card/85 p-6 shadow-soft transition-all duration-700",
                 visible[index]
                   ? "translate-y-0 opacity-100"
                   : "translate-y-4 opacity-0"

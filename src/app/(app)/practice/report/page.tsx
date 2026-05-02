@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
+import { MarkdownText } from "@/components/ui/MarkdownText";
 import { computeScore, getGradeBand } from "@/lib/practice/scoring";
 import type { PracticeAttempt, PracticeSession } from "@/lib/storage";
 import {
@@ -15,12 +16,19 @@ import {
   setLastAttempt,
   setRewriteMode,
 } from "@/lib/storage";
+import { addWeaknessEvents } from "@/lib/weaknesses";
 
 type ResubmitResult = {
   delta: number;
   nextScore: number;
   nextBand: number;
   summary: string;
+};
+
+type PracticeAiFeedback = {
+  mode: "demo" | "gemini";
+  feedback: string;
+  weaknessTags: string[];
 };
 
 const countWords = (text: string) => {
@@ -30,25 +38,15 @@ const countWords = (text: string) => {
 
 export default function PracticeReportPage() {
   const router = useRouter();
-  const [session, setSession] = useState<PracticeSession | null>(null);
-  const [attempt, setAttempt] = useState<PracticeAttempt | null>(null);
+  const [session] = useState<PracticeSession | null>(() => getLastSession());
+  const [attempt, setAttempt] = useState<PracticeAttempt | null>(() =>
+    getLastAttempt()
+  );
   const [resubmitResult, setResubmitResult] = useState<ResubmitResult | null>(
     null
   );
-
-  useEffect(() => {
-    const storedSession = getLastSession();
-    const storedAttempt = getLastAttempt();
-
-    if (!storedSession || !storedAttempt) {
-      setSession(null);
-      setAttempt(null);
-      return;
-    }
-
-    setSession(storedSession);
-    setAttempt(storedAttempt);
-  }, []);
+  const [aiFeedback, setAiFeedback] = useState<PracticeAiFeedback | null>(null);
+  const [feedbackLoading, setFeedbackLoading] = useState(false);
 
   const scoreLine = useMemo(() => {
     if (!session || !attempt) {
@@ -108,13 +106,69 @@ export default function PracticeReportPage() {
     setAttempt(updated);
     setLastAttempt(updated);
     addAttemptToHistory(updated);
+    addWeaknessEvents(
+      fresh.lostMarks.map((lostMark) => ({
+        source: "practice",
+        subjectId: session.subject,
+        label: lostMark,
+        detail: `${session.paper} · ${session.topic}`,
+        href: "/practice/report",
+      }))
+    );
     setResubmitResult({ delta, nextScore, nextBand, summary });
+  };
+
+  const handleAiFeedback = async () => {
+    if (!session || !attempt || feedbackLoading) {
+      return;
+    }
+
+    setFeedbackLoading(true);
+    try {
+      const response = await fetch("/api/practice/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session,
+          answer: attempt.submittedText || attempt.draftText,
+        }),
+      });
+      const data = (await response.json()) as PracticeAiFeedback & {
+        error?: string;
+      };
+
+      if (!response.ok || !data.feedback) {
+        throw new Error(data.error || "Unable to generate feedback.");
+      }
+
+      setAiFeedback(data);
+      addWeaknessEvents(
+        data.weaknessTags.map((tag) => ({
+          source: "practice",
+          subjectId: session.subject,
+          label: tag,
+          detail: `${session.paper} · ${session.topic}`,
+          href: "/practice/report",
+        }))
+      );
+    } catch (error) {
+      setAiFeedback({
+        mode: "demo",
+        feedback:
+          error instanceof Error
+            ? error.message
+            : "Unable to generate feedback right now.",
+        weaknessTags: [],
+      });
+    } finally {
+      setFeedbackLoading(false);
+    }
   };
 
   if (!session || !attempt) {
     return (
       <Container className="px-0">
-        <Card className="border-border bg-white/70 shadow-soft">
+        <Card className="border-border bg-card/80 shadow-soft">
           <div className="space-y-3">
             <h1 className="text-2xl font-semibold text-text-main">
               No report yet
@@ -155,7 +209,7 @@ export default function PracticeReportPage() {
         </Card>
 
         <div className="grid gap-4 lg:grid-cols-3">
-          <Card className="border-border bg-white/70 shadow-soft">
+          <Card className="border-border bg-card/80 shadow-soft">
             <p className="text-sm font-semibold text-text-main">Strengths</p>
             <ul className="mt-3 space-y-2 text-sm text-text-secondary">
               {strengths.map((item) => (
@@ -164,7 +218,7 @@ export default function PracticeReportPage() {
             </ul>
           </Card>
 
-          <Card className="border-border bg-white/70 shadow-soft">
+          <Card className="border-border bg-card/80 shadow-soft">
             <p className="text-sm font-semibold text-text-main">Lost Marks</p>
             <ul className="mt-3 space-y-2 text-sm text-text-secondary">
               {lostMarks.map((item) => (
@@ -173,7 +227,7 @@ export default function PracticeReportPage() {
             </ul>
           </Card>
 
-          <Card className="border-border bg-white/70 shadow-soft">
+          <Card className="border-border bg-card/80 shadow-soft">
             <p className="text-sm font-semibold text-text-main">
               Band Jump Plan
             </p>
@@ -186,7 +240,7 @@ export default function PracticeReportPage() {
         </div>
 
         {resubmitResult ? (
-          <Card className="border border-primary/20 bg-white/80 shadow-soft">
+          <Card className="border border-primary/20 bg-card/85 shadow-soft">
             <p className="text-sm font-semibold text-text-main">
               Improvement check
             </p>
@@ -196,12 +250,35 @@ export default function PracticeReportPage() {
           </Card>
         ) : null}
 
+        {aiFeedback ? (
+          <Card className="border border-primary/20 bg-card/90 shadow-soft">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="text-sm font-semibold text-text-main">
+                AI feedback
+              </p>
+              <span className="rounded-full border border-border bg-card/85 px-3 py-1 text-xs font-semibold text-text-secondary">
+                {aiFeedback.mode === "gemini" ? "Gemini" : "Demo mode"}
+              </span>
+            </div>
+            <div className="mt-3 text-sm text-text-secondary">
+              <MarkdownText content={aiFeedback.feedback} />
+            </div>
+          </Card>
+        ) : null}
+
         <div className="flex flex-col gap-3 sm:flex-row">
           <Button className="shadow" onClick={handleRewrite}>
             Rewrite with guidance
           </Button>
           <Button variant="secondary" onClick={handleResubmit}>
             Resubmit
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={handleAiFeedback}
+            disabled={feedbackLoading}
+          >
+            {feedbackLoading ? "Getting feedback..." : "Get AI feedback"}
           </Button>
         </div>
       </div>

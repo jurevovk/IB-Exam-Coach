@@ -10,6 +10,9 @@ import { Testimonials } from "@/components/marketing/Testimonials";
 export default function Home() {
   return (
     <div className="relative overflow-x-hidden">
+      <div className="sr-only" aria-hidden="true">
+        Render check OK
+      </div>
       <BackgroundBlobs />
       <HeroV2 />
       <ProofStats />

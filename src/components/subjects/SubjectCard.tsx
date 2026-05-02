@@ -19,22 +19,22 @@ export function SubjectCard({
   startHref,
 }: SubjectCardProps) {
   return (
-    <Card className="flex h-full flex-col gap-5 border-border bg-white/70 shadow-card transition-transform duration-200 hover:-translate-y-[1px]">
+    <Card className="flex h-full flex-col gap-5 border-border bg-card/80 shadow-card transition-transform duration-200 hover:-translate-y-[1px]">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-4">
-          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-primary shadow-sm">
+          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-card text-primary shadow-sm">
             <Icon name={subject.icon} size={20} />
           </span>
           <div className="space-y-1">
             <h3 className="text-lg font-semibold text-text-main">
               {subject.name}
             </h3>
-            <span className="inline-flex rounded-full border border-border/60 bg-white/80 px-3 py-1 text-xs font-semibold text-text-muted">
+            <span className="inline-flex rounded-full border border-border/60 bg-card/85 px-3 py-1 text-xs font-semibold text-text-muted">
               {levelLabel}
             </span>
           </div>
         </div>
-        <span className="rounded-full border border-border/60 bg-white/80 px-3 py-1 text-xs font-semibold text-text-muted">
+        <span className="rounded-full border border-border/60 bg-card/85 px-3 py-1 text-xs font-semibold text-text-muted">
           Est. Grade: {estGrade}
         </span>
       </div>

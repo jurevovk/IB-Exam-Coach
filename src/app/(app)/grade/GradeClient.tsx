@@ -16,7 +16,7 @@ export default function GradeClient() {
   return (
     <main className="min-h-screen py-10 sm:py-16">
       <Container>
-        <Card className="border-border bg-white/70 shadow-soft">
+        <Card className="border-border bg-card/80 shadow-soft">
           <div className="space-y-3">
             <h1 className="text-2xl font-semibold text-text-main">
               Grade: {subject} ({level})

@@ -18,6 +18,7 @@ import {
   setLastSession,
   setRewriteMode,
 } from "@/lib/storage";
+import { addWeaknessEvents } from "@/lib/weaknesses";
 
 const commandTermHelp: Record<string, string> = {
   Explain: "Make clear how or why something happens by linking steps logically.",
@@ -27,6 +28,12 @@ const commandTermHelp: Record<string, string> = {
   "To what extent":
     "State the degree of agreement and support it with evaluation.",
   Analyze: "Break the issue into parts and show how they connect.",
+  Apply:
+    "Use the concept or theory directly in the context rather than only defining it.",
+  Distinguish:
+    "Make the difference clear by defining both sides and using examples.",
+  Recommend:
+    "Choose the best option, justify it, and mention limitations or trade-offs.",
 };
 
 const createId = () => {
@@ -75,7 +82,7 @@ export default function PracticeWritePage() {
   const [question, setQuestion] = useState<PracticeQuestion | null>(null);
   const [attemptId, setAttemptId] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
-  const [savedAt, setSavedAt] = useState<Date | null>(null);
+  const [savedAt, setSavedAt] = useState<number | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [timeSpent, setTimeSpent] = useState(0);
   const [showCommandHelp, setShowCommandHelp] = useState(true);
@@ -117,19 +124,23 @@ export default function PracticeWritePage() {
       setLastSession(nextSession);
     }
 
-    setSession(nextSession);
-    setQuestion(resolved);
-
     const lastAttempt = getLastAttempt();
-    if (lastAttempt?.sessionId === nextSession.id) {
-      setAttemptId(lastAttempt.id);
-      setDraft(lastAttempt.draftText || lastAttempt.submittedText || "");
-      setTimeSpent(lastAttempt.timeSpent || 0);
-    } else {
-      setAttemptId(createId());
-    }
+    const timeout = window.setTimeout(() => {
+      setSession(nextSession);
+      setQuestion(resolved);
 
-    setShowGuidance(getRewriteMode());
+      if (lastAttempt?.sessionId === nextSession.id) {
+        setAttemptId(lastAttempt.id);
+        setDraft(lastAttempt.draftText || lastAttempt.submittedText || "");
+        setTimeSpent(lastAttempt.timeSpent || 0);
+      } else {
+        setAttemptId(createId());
+      }
+
+      setShowGuidance(getRewriteMode());
+    }, 0);
+
+    return () => window.clearTimeout(timeout);
   }, [router, pathname]);
 
   const wordCount = useMemo(() => countWords(draft), [draft]);
@@ -139,8 +150,10 @@ export default function PracticeWritePage() {
       return;
     }
 
-    setIsSaving(true);
-    const timeout = window.setTimeout(() => {
+    const savingTimeout = window.setTimeout(() => {
+      setIsSaving(true);
+    }, 0);
+    const saveTimeout = window.setTimeout(() => {
       const attempt: PracticeAttempt = {
         id: attemptId,
         sessionId: session.id,
@@ -156,11 +169,14 @@ export default function PracticeWritePage() {
       };
 
       setLastAttempt(attempt);
-      setSavedAt(new Date());
+      setSavedAt(timeSpentRef.current);
       setIsSaving(false);
     }, 600);
 
-    return () => window.clearTimeout(timeout);
+    return () => {
+      window.clearTimeout(savingTimeout);
+      window.clearTimeout(saveTimeout);
+    };
   }, [attemptId, draft, session, wordCount]);
 
   useEffect(() => {
@@ -193,6 +209,15 @@ export default function PracticeWritePage() {
 
     setLastAttempt(attempt);
     addAttemptToHistory(attempt);
+    addWeaknessEvents(
+      result.lostMarks.map((lostMark) => ({
+        source: "practice",
+        subjectId: session.subject,
+        label: lostMark,
+        detail: `${session.paper} · ${session.topic}`,
+        href: "/practice/report",
+      }))
+    );
     setRewriteMode(false);
     router.push("/practice/report");
   };
@@ -216,7 +241,7 @@ export default function PracticeWritePage() {
       return "Not saved yet";
     }
 
-    const elapsed = Math.floor((Date.now() - savedAt.getTime()) / 1000);
+    const elapsed = Math.max(0, timeSpent - savedAt);
     if (elapsed < 10) {
       return "Saved just now";
     }
@@ -252,9 +277,12 @@ export default function PracticeWritePage() {
               {session.subject.split("-").join(" ")}{" "}
               {session.level.toUpperCase()} ·{" "}
               {session.paper} · {session.marks} marks
+              {session.practiceMode
+                ? ` · ${session.practiceMode.split("-").join(" ")}`
+                : ""}
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-3 rounded-full border border-border/60 bg-white/70 px-4 py-2 text-xs text-text-muted shadow-sm">
+          <div className="flex flex-wrap items-center gap-3 rounded-full border border-border/60 bg-card/80 px-4 py-2 text-xs text-text-muted shadow-sm">
             <span>
               {session.mode === "timed" ? "Timer" : "Time"}:{" "}
               <strong className="text-text-main">{formatTimer(timeSpent)}</strong>
@@ -271,22 +299,22 @@ export default function PracticeWritePage() {
 
         <div className="grid gap-6 lg:grid-cols-[1.1fr_1.4fr]">
           <div className="space-y-4">
-            <Card className="border-border bg-white/70 shadow-soft">
+            <Card className="border-border bg-card/80 shadow-soft">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
                 Question
               </p>
               <p className="mt-3 text-sm text-text-main">{question.prompt}</p>
               <div className="mt-4 flex flex-wrap gap-2 text-xs text-text-muted">
-                <span className="rounded-full border border-border/60 bg-white/80 px-3 py-1">
+                <span className="rounded-full border border-border/60 bg-card/85 px-3 py-1">
                   Command: {session.commandTerm}
                 </span>
-                <span className="rounded-full border border-border/60 bg-white/80 px-3 py-1">
+                <span className="rounded-full border border-border/60 bg-card/85 px-3 py-1">
                   Difficulty: {session.difficulty}
                 </span>
               </div>
             </Card>
 
-            <Card className="border-border bg-white/70 shadow-soft">
+            <Card className="border-border bg-card/80 shadow-soft">
               <button
                 type="button"
                 className="flex w-full items-center justify-between text-left text-sm font-semibold text-text-main"
@@ -305,7 +333,7 @@ export default function PracticeWritePage() {
               ) : null}
             </Card>
 
-            <Card className="border-border bg-white/70 shadow-soft">
+            <Card className="border-border bg-card/80 shadow-soft">
               <button
                 type="button"
                 className="flex w-full items-center justify-between text-left text-sm font-semibold text-text-main"
@@ -325,7 +353,7 @@ export default function PracticeWritePage() {
               ) : null}
             </Card>
 
-            <Card className="border-border bg-white/70 shadow-soft">
+            <Card className="border-border bg-card/80 shadow-soft">
               <p className="text-sm font-semibold text-text-main">
                 Evidence reminders
               </p>
@@ -337,7 +365,7 @@ export default function PracticeWritePage() {
             </Card>
 
             {showGuidance && guidancePlan.length ? (
-              <Card className="border-border bg-white/80 shadow-soft">
+              <Card className="border-border bg-card/85 shadow-soft">
                 <p className="text-sm font-semibold text-text-main">
                   Band Jump Plan
                 </p>
@@ -350,7 +378,7 @@ export default function PracticeWritePage() {
             ) : null}
           </div>
 
-          <Card className="border-border bg-white/70 shadow-soft">
+          <Card className="border-border bg-card/80 shadow-soft">
             <div className="flex items-center justify-between">
               <p className="text-sm font-semibold text-text-main">
                 Your response
@@ -364,7 +392,7 @@ export default function PracticeWritePage() {
               onChange={(event) => setDraft(event.target.value)}
               placeholder="Write your response here..."
               rows={18}
-              className="mt-4 w-full resize-none rounded-2xl border border-border/70 bg-white/80 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+              className="mt-4 w-full resize-none rounded-2xl border border-border/70 bg-card/85 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
             />
           </Card>
         </div>

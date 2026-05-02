@@ -15,7 +15,7 @@ export default function TokGradePage() {
   return (
     <main className="min-h-screen py-10 sm:py-16">
       <Container>
-        <section className="rounded-[28px] border border-border bg-white/70 p-8 shadow-soft backdrop-blur-sm sm:p-10">
+        <section className="rounded-[28px] border border-border bg-card/80 p-8 shadow-soft backdrop-blur-sm sm:p-10">
           <BackButton className="mb-6" />
           <h1 className="font-heading text-2xl font-semibold text-text-main">
             TOK Feedback

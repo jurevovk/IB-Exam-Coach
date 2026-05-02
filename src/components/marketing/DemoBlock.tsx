@@ -6,7 +6,7 @@ export function DemoBlock() {
       <div className="grid gap-6 p-6 sm:p-8 md:grid-cols-2 lg:p-10">
         <div className="space-y-5">
           <p className="text-sm font-semibold text-text-secondary">Your Answer</p>
-          <div className="space-y-4 rounded-xl border border-border/60 bg-[#F7F9FC] p-5 shadow-[inset_0_1px_2px_rgba(15,23,42,0.08)]">
+          <div className="space-y-4 rounded-xl border border-border/60 bg-bg p-5 shadow-[inset_0_1px_2px_rgba(15,23,42,0.08)]">
             <p className="text-sm text-text-secondary">
               The case study shows how incentives can shift student study
               patterns, but it also creates short-term motivation that fades
@@ -30,7 +30,7 @@ export function DemoBlock() {
             Examiner Report
           </p>
           <div className="relative overflow-hidden rounded-xl bg-report p-6 text-white shadow-soft">
-            <div className="pointer-events-none absolute -right-6 -top-10 h-24 w-24 rounded-full bg-white/10 blur-2xl" />
+            <div className="pointer-events-none absolute -right-6 -top-10 h-24 w-24 rounded-full bg-card/10 blur-2xl" />
             <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-white/10 to-transparent" />
             <div className="relative space-y-6">
               <div className="space-y-2">
@@ -43,7 +43,7 @@ export function DemoBlock() {
               </div>
               <div className="divide-y divide-white/10 text-sm text-white/80">
                 <div className="flex items-start gap-3 py-4 first:pt-0">
-                  <span className="mt-0.5 rounded-md bg-white/10 p-2 text-emerald-300">
+                  <span className="mt-0.5 rounded-md bg-card/10 p-2 text-emerald-300">
                     <Icon name="checkCircle" size={16} />
                   </span>
                   <div>
@@ -52,7 +52,7 @@ export function DemoBlock() {
                   </div>
                 </div>
                 <div className="flex items-start gap-3 py-4">
-                  <span className="mt-0.5 rounded-md bg-white/10 p-2 text-rose-300">
+                  <span className="mt-0.5 rounded-md bg-card/10 p-2 text-rose-300">
                     <Icon name="x" size={16} />
                   </span>
                   <div>
@@ -61,7 +61,7 @@ export function DemoBlock() {
                   </div>
                 </div>
                 <div className="flex items-start gap-3 pt-4">
-                  <span className="mt-0.5 rounded-md bg-white/10 p-2 text-amber-300">
+                  <span className="mt-0.5 rounded-md bg-card/10 p-2 text-amber-300">
                     <Icon name="flame" size={16} />
                   </span>
                   <div>

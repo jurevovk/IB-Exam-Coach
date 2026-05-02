@@ -6,22 +6,22 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bg: "#F5F7FB",
-        glowFrom: "#EAF1FF",
-        card: "#FFFFFF",
-        border: "#E6EAF2",
+        bg: "rgb(var(--color-bg) / <alpha-value>)",
+        glowFrom: "rgb(var(--color-glow-from) / <alpha-value>)",
+        card: "rgb(var(--color-card) / <alpha-value>)",
+        border: "rgb(var(--color-border) / <alpha-value>)",
         text: {
-          main: "#0B1220",
-          secondary: "#445064",
-          muted: "#7C879B",
+          main: "rgb(var(--color-text-main) / <alpha-value>)",
+          secondary: "rgb(var(--color-text-secondary) / <alpha-value>)",
+          muted: "rgb(var(--color-text-muted) / <alpha-value>)",
         },
         primary: {
-          DEFAULT: "#2F66FF",
-          hover: "#2456D9",
+          DEFAULT: "rgb(var(--color-primary) / <alpha-value>)",
+          hover: "rgb(var(--color-primary-hover) / <alpha-value>)",
         },
         report: {
-          top: "#0B2A59",
-          bottom: "#071A3A",
+          top: "rgb(var(--color-report-top) / <alpha-value>)",
+          bottom: "rgb(var(--color-report-bottom) / <alpha-value>)",
         },
       },
       boxShadow: {
@@ -35,8 +35,9 @@ const config: Config = {
       },
       backgroundImage: {
         glow:
-          "radial-gradient(1200px circle at top, #EAF1FF 0%, #F5F7FB 60%)",
-        report: "linear-gradient(180deg, #0B2A59 0%, #071A3A 100%)",
+          "radial-gradient(1200px circle at top, rgb(var(--color-glow-from)) 0%, rgb(var(--color-bg)) 60%)",
+        report:
+          "linear-gradient(180deg, rgb(var(--color-report-top)) 0%, rgb(var(--color-report-bottom)) 100%)",
       },
       fontFamily: {
         heading: ["var(--font-sora)", "ui-sans-serif", "system-ui", "sans-serif"],

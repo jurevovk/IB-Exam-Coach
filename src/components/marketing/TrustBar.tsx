@@ -15,11 +15,11 @@ const items = [
 
 export function TrustBar() {
   return (
-    <section className="rounded-full border border-border/60 bg-white/80 px-6 py-4 shadow-soft backdrop-blur">
+    <section className="rounded-full border border-border/60 bg-card/85 px-6 py-4 shadow-soft backdrop-blur">
       <div className="flex flex-col items-center justify-center gap-4 text-sm text-text-muted sm:flex-row sm:gap-8">
         {items.map((item) => (
           <div key={item.label} className="flex items-center gap-3">
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-primary shadow-sm">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-card text-primary shadow-sm">
               <svg
                 viewBox="0 0 24 24"
                 width="16"

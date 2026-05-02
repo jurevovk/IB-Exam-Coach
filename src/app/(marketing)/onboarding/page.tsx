@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { useAuth } from "@/components/auth/AuthProvider";
 import { MarketingPanel } from "@/components/marketing/MarketingPanel";
@@ -25,7 +25,6 @@ const sessionOptions = [
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const pathname = usePathname();
   const { ready, profile } = useRequireAuth({ requireProfile: false });
   const { user, updateProfile, profile: authProfile } = useAuth();
   const hasRedirected = useRef(false);
@@ -43,17 +42,13 @@ export default function OnboardingPage() {
 
     if (isProfileComplete(profile) && !hasRedirected.current) {
       hasRedirected.current = true;
-      console.log("redirecting because onboarding already complete", {
-        path: pathname,
-        ready,
-        user,
-      });
       router.replace("/dashboard");
     }
-  }, [ready, profile, router, pathname, user]);
+  }, [ready, profile, router]);
 
   const effectiveSession =
     sessionChoice === "Custom" ? customSession.trim() : sessionChoice;
+  const progressPercent = Math.round((step / 3) * 100);
 
   const selectedKeys = useMemo(
     () => new Set(selectedSubjects.map((subject) => subject.key)),
@@ -106,30 +101,39 @@ export default function OnboardingPage() {
     <MarketingPanel>
       <div className="space-y-8">
         <BackButton />
-        <header className="space-y-3 text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-text-muted">
-            Step {step} of 3
+        <header className="mx-auto max-w-3xl space-y-4 text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-primary">
+            Step {step} of 3 · {progressPercent}% ready
           </p>
           <h1 className="font-heading text-3xl font-semibold text-text-main sm:text-4xl">
-            Build your IB plan
+            Build your study cockpit
           </h1>
-          <p className="text-sm text-text-secondary sm:text-base">
-            Tell us your exam session and subjects so we can personalize
-            practice.
+          <p className="text-sm leading-relaxed text-text-secondary sm:text-base">
+            Set your exam session, subjects, and levels once. Returning users
+            with a complete profile go straight back to the dashboard.
           </p>
+          <div className="mx-auto h-2 max-w-xl overflow-hidden rounded-full bg-bg">
+            <div
+              className="h-full rounded-full bg-primary transition-all"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
         </header>
 
         {step === 1 ? (
           <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
-            <div className="rounded-2xl border border-border/60 bg-white/70 p-5 shadow-sm">
-              <p className="text-sm font-medium text-text-secondary">
+            <div className="rounded-[28px] border border-border/60 bg-card/90 p-6 shadow-card">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
+                Exam session
+              </p>
+              <p className="mt-2 text-sm font-medium text-text-main">
                 When is your next IB exam session?
               </p>
               <div className="mt-4 space-y-3">
                 <select
                   value={sessionChoice}
                   onChange={(event) => setSessionChoice(event.target.value)}
-                  className="w-full rounded-xl border border-border/70 bg-white/80 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+                  className="w-full rounded-xl border border-border/70 bg-card/85 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
                 >
                   {sessionOptions.map((option) => (
                     <option key={option} value={option}>
@@ -142,7 +146,7 @@ export default function OnboardingPage() {
                     value={customSession}
                     onChange={(event) => setCustomSession(event.target.value)}
                     placeholder="e.g. May 2028"
-                    className="w-full rounded-xl border border-border/70 bg-white/80 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
+                    className="w-full rounded-xl border border-border/70 bg-card/85 px-4 py-3 text-sm text-text-main shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
                   />
                 ) : null}
               </div>
@@ -153,7 +157,10 @@ export default function OnboardingPage() {
         {step === 2 ? (
           <div className="space-y-4">
             <div className="text-center">
-              <p className="text-sm font-medium text-text-secondary">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
+                Subjects
+              </p>
+              <p className="mt-2 text-sm font-medium text-text-secondary">
                 Choose your subjects
               </p>
             </div>
@@ -167,9 +174,9 @@ export default function OnboardingPage() {
                     type="button"
                     onClick={() => toggleSubject(subject.key, subject.name)}
                     className={cn(
-                      "rounded-2xl border border-border/60 bg-white/70 p-4 text-left shadow-sm transition hover:-translate-y-[1px]",
+                      "rounded-2xl border border-border/60 bg-card/85 p-4 text-left shadow-sm transition hover:-translate-y-[1px]",
                       isSelected
-                        ? "border-primary/40 bg-white shadow-card"
+                        ? "border-primary/40 bg-primary/10 shadow-card ring-2 ring-primary/10"
                         : "hover:border-border"
                     )}
                   >
@@ -194,7 +201,10 @@ export default function OnboardingPage() {
         {step === 3 ? (
           <div className="space-y-4">
             <div className="text-center">
-              <p className="text-sm font-medium text-text-secondary">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
+                Levels
+              </p>
+              <p className="mt-2 text-sm font-medium text-text-secondary">
                 Choose HL or SL for each subject
               </p>
             </div>
@@ -218,7 +228,7 @@ export default function OnboardingPage() {
           </div>
         ) : null}
 
-        <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
+        <div className="sticky bottom-4 z-10 flex flex-col items-center justify-between gap-3 rounded-2xl border border-border/60 bg-card/90 p-3 shadow-card backdrop-blur sm:flex-row">
           <Button
             variant="secondary"
             className="w-full sm:w-auto"

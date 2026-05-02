@@ -31,6 +31,8 @@ export type PracticeSession = {
   difficulty: "easy" | "medium" | "hard";
   commandTerm: string;
   goalMode: "band-jump" | "consistency";
+  practiceMode?: "topic-drill" | "paper-practice" | "timed-mode" | "weakness-repair";
+  lessonId?: string;
   questionId?: string;
 };
 

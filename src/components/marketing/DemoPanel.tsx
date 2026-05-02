@@ -14,14 +14,14 @@ const lostMarks = [
 
 export function DemoPanel() {
   return (
-    <Card className="mx-auto max-w-[1100px] rounded-[28px] border border-border bg-white/80 p-6 shadow-card backdrop-blur-sm md:p-8">
+    <Card className="mx-auto max-w-[1100px] rounded-[28px] border border-border bg-card/85 p-6 shadow-card backdrop-blur-sm md:p-8">
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="rounded-2xl border border-border/60 bg-bg p-5 shadow-sm">
           <div className="flex items-center justify-between">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
               Your Answer
             </p>
-            <span className="rounded-full border border-border/60 bg-white/80 px-3 py-1 text-xs text-text-muted">
+            <span className="rounded-full border border-border/60 bg-card/85 px-3 py-1 text-xs text-text-muted">
               Draft
             </span>
           </div>
@@ -29,13 +29,13 @@ export function DemoPanel() {
             <div className="h-3 w-11/12 rounded-full bg-border/70" />
             <div className="h-3 w-10/12 rounded-full bg-border/60" />
             <div className="h-3 w-9/12 rounded-full bg-border/50" />
-            <div className="h-24 w-full rounded-xl border border-border/60 bg-white/80" />
+            <div className="h-24 w-full rounded-xl border border-border/60 bg-card/85" />
             <div className="h-3 w-8/12 rounded-full bg-border/50" />
           </div>
         </div>
 
         <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-report p-5 text-white shadow-soft">
-          <div className="pointer-events-none absolute -right-16 -top-20 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
+          <div className="pointer-events-none absolute -right-16 -top-20 h-40 w-40 rounded-full bg-card/10 blur-2xl" />
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/60">
             Examiner Report
           </p>

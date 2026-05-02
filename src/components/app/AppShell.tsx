@@ -75,20 +75,25 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     hasUnreadCoach: false,
   });
 
-  if (!ready || !profile) {
-    return null;
-  }
-
   const refreshUnread = useCallback(() => {
     setUnreadNotifications(getUnreadNotificationCount());
     setMessageUnread(getUnreadCoachState());
   }, []);
 
   useEffect(() => {
+    if (!ready || !profile) {
+      return;
+    }
+
     seedNotificationsIfEmpty();
     seedMessagesIfEmpty();
-    refreshUnread();
-  }, [refreshUnread]);
+    const timeout = window.setTimeout(refreshUnread, 0);
+    return () => window.clearTimeout(timeout);
+  }, [ready, profile, refreshUnread]);
+
+  if (!ready || !profile) {
+    return null;
+  }
 
   const handleLogout = () => {
     logout();
@@ -135,11 +140,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   className={cn(
                     "flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition",
                     isActive
-                      ? "bg-white/15 text-white"
-                      : "text-white/70 hover:bg-white/10 hover:text-white"
+                      ? "bg-card/15 text-white"
+                      : "text-white/70 hover:bg-card/10 hover:text-white"
                   )}
                 >
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-card/10">
                     <svg
                       viewBox="0 0 24 24"
                       width="16"
@@ -159,14 +164,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             })}
           </nav>
 
-          <div className="mt-auto rounded-2xl border border-white/15 bg-white/10 p-4 text-xs text-white/70">
-            Focus streak: <span className="font-semibold text-white">4</span>{" "}
-            days
-          </div>
+          <div className="mt-auto" />
         </aside>
 
         <div className="lg:ml-[284px]">
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border/60 bg-white/80 p-3 shadow-sm backdrop-blur-sm">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border/60 bg-card/85 p-3 shadow-sm backdrop-blur-sm">
             <div className="text-xs font-semibold uppercase tracking-[0.25em] text-text-muted">
               Workspace
             </div>
@@ -174,7 +176,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <button
                 type="button"
                 onClick={openNotifications}
-                className="relative flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-white/80 text-text-muted shadow-sm transition hover:text-text-main"
+                className="relative flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-card/80 text-text-muted shadow-sm transition hover:text-text-main"
                 aria-label="Open notifications"
               >
                 <svg
@@ -196,7 +198,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <button
                 type="button"
                 onClick={openMessages}
-                className="relative flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-white/80 text-text-muted shadow-sm transition hover:text-text-main"
+                className="relative flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-card/80 text-text-muted shadow-sm transition hover:text-text-main"
                 aria-label="Open messages"
               >
                 <svg
